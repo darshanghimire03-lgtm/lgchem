@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Account - LG CHEM</title>
+    <title>Your Cart - LG CHEM</title>
 
     <link rel="icon" type="image/png" href="../favicon.png">
 
@@ -25,7 +25,7 @@
             </a>
 
             <div class="user-menu" id="userMenu">
-                <div class="user-chip active-page" id="userChip">
+                <div class="user-chip" id="userChip">
                     <div class="user-avatar" id="userAvatar">?</div>
                     <span class="user-name" id="userNameLabel">Account</span>
                     <i class="fas fa-chevron-down" style="font-size:0.7rem;"></i>
@@ -38,49 +38,25 @@
                 </div>
             </div>
 
-            <a href="../cart/index.html" class="icon-btn" aria-label="Cart">
+            <a href="../cart/index.html" class="icon-btn active-page" aria-label="Cart">
                 <i class="fas fa-shopping-cart"></i>
                 <span class="cart-badge" id="cartBadge">0</span>
             </a>
         </div>
     </nav>
 
-    <section class="account-section">
-        <div id="accountRoot">
-            <div class="skeleton-header">
-                <div class="skeleton skeleton-avatar-lg"></div>
-                <div class="skeleton-header-lines">
-                    <div class="skeleton skeleton-line w-60"></div>
-                    <div class="skeleton skeleton-line w-40"></div>
-                    <div class="skeleton skeleton-line w-30"></div>
-                </div>
-            </div>
-            <div class="details-card">
-                <div class="skeleton skeleton-line w-40" style="height:20px;"></div>
-                <div class="skeleton-detail-row">
-                    <div class="skeleton skeleton-line label"></div>
-                    <div class="skeleton skeleton-line value"></div>
-                </div>
-                <div class="skeleton-detail-row">
-                    <div class="skeleton skeleton-line label"></div>
-                    <div class="skeleton skeleton-line value"></div>
-                </div>
-                <div class="skeleton-detail-row">
-                    <div class="skeleton skeleton-line label"></div>
-                    <div class="skeleton skeleton-line value"></div>
-                </div>
-                <div class="skeleton-detail-row">
-                    <div class="skeleton skeleton-line label"></div>
-                    <div class="skeleton skeleton-line value"></div>
-                </div>
-            </div>
-            <div class="details-card">
-                <div class="skeleton skeleton-line w-40" style="height:20px;"></div>
-                <div class="skeleton-actions">
-                    <div class="skeleton skeleton-btn"></div>
-                    <div class="skeleton skeleton-btn"></div>
-                    <div class="skeleton skeleton-btn"></div>
-                </div>
+    <section class="cart-section">
+        <div class="cart-header">
+            <h2 class="cart-title">Your <span>Cart</span></h2>
+            <a href="../index.html#products" class="continue-shopping">
+                <i class="fas fa-arrow-left"></i> Continue Shopping
+            </a>
+        </div>
+
+        <div id="cartRoot">
+            <div class="state-panel">
+                <i class="fas fa-spinner fa-spin"></i>
+                <h3>Loading your cart…</h3>
             </div>
         </div>
     </section>
