@@ -10,608 +10,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    <style>
-        :root {
-            --dark-blue: #002B5B;
-            --bright-green: #008000;
-            --light-bg: #f4f8fb;
-            --white: #ffffff;
-            --text-dark: #333333;
-            --text-light: #666666;
-            --shadow: 0 4px 6px rgba(0,0,0,0.05);
-            --card-shadow: 0 10px 25px rgba(0,0,0,0.08);
-            --error-red: #d9534f;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
-
-        body {
-            background-color: var(--light-bg);
-            color: var(--text-dark);
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-        .navbar {
-            background-color: var(--white);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 5%;
-            box-shadow: var(--shadow);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .brand-container {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-        }
-
-        .brand-logo {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid var(--dark-blue);
-            background-color: var(--light-bg);
-        }
-
-        .brand-name {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--dark-blue);
-            letter-spacing: 1px;
-        }
-
-        .brand-name span {
-            color: var(--bright-green);
-        }
-
-        .nav-icons {
-            display: flex;
-            gap: 25px;
-            align-items: center;
-        }
-
-        .icon-btn {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 1.3rem;
-            color: var(--dark-blue);
-            transition: color 0.3s ease, transform 0.2s ease;
-            position: relative;
-            text-decoration: none;
-        }
-
-        .icon-btn:hover {
-            color: var(--bright-green);
-            transform: scale(1.1);
-        }
-
-        .cart-badge {
-            position: absolute;
-            top: -8px;
-            right: -10px;
-            background-color: var(--bright-green);
-            color: white;
-            font-size: 0.7rem;
-            font-weight: bold;
-            padding: 2px 6px;
-            border-radius: 50%;
-        }
-
-        .user-menu {
-            display: none;
-            align-items: center;
-            gap: 10px;
-            position: relative;
-        }
-
-        .user-chip {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: var(--light-bg);
-            padding: 6px 14px 6px 8px;
-            border-radius: 50px;
-            cursor: pointer;
-            border: 1px solid #e5e5e5;
-        }
-
-        .user-avatar {
-            width: 28px;
-            height: 28px;
-            min-width: 28px;
-            border-radius: 50%;
-            background: var(--dark-blue);
-            color: var(--white);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.8rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            line-height: 1;
-            overflow: hidden;
-            flex-shrink: 0;
-        }
-
-        .user-name {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--dark-blue);
-            max-width: 120px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .user-dropdown {
-            display: none;
-            position: absolute;
-            top: 110%;
-            right: 0;
-            background: var(--white);
-            border-radius: 10px;
-            box-shadow: var(--card-shadow);
-            min-width: 180px;
-            overflow: hidden;
-            border: 1px solid #eaeaea;
-            z-index: 200;
-        }
-
-        .user-dropdown.open {
-            display: block;
-        }
-
-        .user-dropdown a, .user-dropdown button {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            width: 100%;
-            text-align: left;
-            padding: 12px 16px;
-            font-size: 0.85rem;
-            color: var(--text-dark);
-            background: none;
-            border: none;
-            cursor: pointer;
-            text-decoration: none;
-        }
-
-        .user-dropdown a:hover, .user-dropdown button:hover {
-            background: var(--light-bg);
-        }
-
-        .user-dropdown .logout-item {
-            color: #d9534f;
-            border-top: 1px solid #f0f0f0;
-        }
-
-        .account-type-badge {
-            font-size: 0.65rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            color: var(--bright-green);
-            background: rgba(0,128,0,0.08);
-            padding: 2px 8px;
-            border-radius: 20px;
-            display: inline-block;
-            margin: 6px 16px 0 16px;
-        }
-
-        .page-wrap {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .auth-container {
-            background: var(--white);
-            border-radius: 20px;
-            box-shadow: 0 20px 50px rgba(0, 43, 91, 0.15);
-            overflow: hidden;
-            display: flex;
-            max-width: 950px;
-            width: 100%;
-            min-height: 600px;
-            border: 1px solid #eaeaea;
-        }
-
-        .auth-info {
-            flex: 1;
-            background: linear-gradient(135deg, rgba(0, 43, 91, 0.95) 0%, rgba(0, 43, 91, 0.85) 100%),
-                        url('https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?auto=format&fit=crop&w=800&q=80');
-            background-size: cover;
-            background-position: center;
-            padding: 50px 40px;
-            color: var(--white);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            position: relative;
-        }
-
-        .auth-info h2 {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 15px;
-            color: var(--white);
-        }
-
-        .auth-info h2 span {
-            color: #66bb6a;
-        }
-
-        .auth-info p {
-            font-size: 1rem;
-            line-height: 1.6;
-            opacity: 0.9;
-            margin-bottom: 30px;
-        }
-
-        .auth-info ul {
-            list-style: none;
-        }
-
-        .auth-info ul li {
-            margin-bottom: 12px;
-            font-size: 0.95rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .auth-info ul li i {
-            color: #66bb6a;
-            font-size: 1.1rem;
-        }
-
-        .auth-form-container {
-            flex: 1.2;
-            padding: 50px 40px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            overflow-y: auto;
-            max-height: 90vh;
-        }
-
-        .form-header {
-            margin-bottom: 25px;
-        }
-
-        .form-header h3 {
-            font-size: 1.6rem;
-            color: var(--dark-blue);
-            font-weight: 700;
-        }
-
-        .form-header p {
-            color: var(--text-light);
-            font-size: 0.9rem;
-            margin-top: 5px;
-        }
-
-        .auth-tabs {
-            display: flex;
-            background: var(--light-bg);
-            padding: 5px;
-            border-radius: 10px;
-            margin-bottom: 25px;
-        }
-
-        .auth-tab {
-            flex: 1;
-            text-align: center;
-            padding: 10px;
-            font-weight: 600;
-            cursor: pointer;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-            color: var(--text-light);
-            font-size: 0.95rem;
-        }
-
-        .auth-tab.active {
-            background: var(--white);
-            color: var(--dark-blue);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
-
-        .auth-form {
-            display: none;
-            animation: fadeIn 0.4s ease;
-        }
-
-        .auth-form.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .input-group {
-            margin-bottom: 15px;
-            position: relative;
-        }
-
-        .input-group label {
-            display: block;
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--dark-blue);
-            margin-bottom: 5px;
-        }
-
-        .input-wrapper {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-
-        .input-wrapper > i:not(.toggle-password) {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-light);
-            font-size: 0.9rem;
-            pointer-events: none;
-        }
-
-        .input-group input,
-        .input-group select {
-            width: 100%;
-            padding: 12px 15px 12px 40px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            font-family: 'Poppins', sans-serif;
-            transition: border 0.3s ease, box-shadow 0.3s ease;
-            background: var(--white);
-            color: var(--text-dark);
-        }
-
-        .input-group input:focus,
-        .input-group select:focus {
-            outline: none;
-            border-color: var(--bright-green);
-            box-shadow: 0 0 0 3px rgba(0, 128, 0, 0.1);
-        }
-
-        .account-type-selector {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        .account-type-option {
-            flex: 1;
-            text-align: center;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--text-light);
-            transition: all 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .account-type-option i {
-            font-size: 1.2rem;
-        }
-
-        .account-type-option.active {
-            border-color: var(--bright-green);
-            background-color: rgba(0, 128, 0, 0.05);
-            color: var(--bright-green);
-        }
-
-        .toggle-password {
-            position: absolute;
-            right: 15px;
-            left: auto;
-            top: 50%;
-            transform: translateY(-50%);
-            cursor: pointer;
-            color: var(--text-light);
-            font-size: 0.95rem;
-            width: 20px;
-            text-align: center;
-            z-index: 2;
-        }
-
-        .toggle-password:hover {
-            color: var(--bright-green);
-        }
-
-        #loginPassword,
-        #signupPassword,
-        #confirmPassword {
-            padding-right: 42px !important;
-        }
-
-        .error-msg {
-            color: var(--error-red);
-            font-size: 0.8rem;
-            margin-top: 5px;
-            display: none;
-        }
-
-        .form-msg {
-            font-size: 0.85rem;
-            margin-bottom: 15px;
-            padding: 10px 14px;
-            border-radius: 8px;
-            display: none;
-        }
-
-        .form-msg.error {
-            display: block;
-            color: var(--error-red);
-            background: rgba(217, 83, 79, 0.08);
-        }
-
-        .form-msg.success {
-            display: block;
-            color: var(--bright-green);
-            background: rgba(0, 128, 0, 0.08);
-        }
-
-        .btn-submit {
-            width: 100%;
-            padding: 14px;
-            background-color: var(--bright-green);
-            color: var(--white);
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.3s ease, transform 0.2s ease;
-            margin-top: 10px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .btn-submit:hover {
-            background-color: var(--dark-blue);
-            transform: translateY(-2px);
-        }
-
-        .btn-submit:active {
-            transform: translateY(0);
-        }
-
-        .btn-submit:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .form-footer {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 0.85rem;
-            color: var(--text-light);
-        }
-
-        .form-footer a {
-            color: var(--bright-green);
-            font-weight: 600;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        .form-footer a:hover {
-            text-decoration: underline;
-        }
-
-        .logged-in-panel {
-            display: none;
-            text-align: center;
-        }
-
-        .logged-in-panel .avatar-lg {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            background: var(--dark-blue);
-            color: var(--white);
-            font-size: 1.8rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 20px auto;
-            text-transform: uppercase;
-        }
-
-        .logged-in-panel h3 {
-            color: var(--dark-blue);
-            margin-bottom: 6px;
-        }
-
-        .logged-in-panel p {
-            color: var(--text-light);
-            font-size: 0.9rem;
-            margin-bottom: 25px;
-        }
-
-        .btn-secondary {
-            width: 100%;
-            padding: 14px;
-            background-color: var(--white);
-            color: var(--dark-blue);
-            border: 2px solid var(--dark-blue);
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            margin-bottom: 12px;
-        }
-
-        .btn-secondary:hover {
-            background-color: var(--dark-blue);
-            color: var(--white);
-        }
-
-        @media (max-width: 850px) {
-            .auth-container {
-                flex-direction: column;
-                max-width: 500px;
-                min-height: auto;
-            }
-            .auth-info {
-                padding: 30px 25px;
-                min-height: 200px;
-            }
-            .auth-info h2 { font-size: 1.5rem; }
-            .auth-info p { font-size: 0.9rem; }
-            .auth-info ul { display: none; }
-
-            .auth-form-container {
-                padding: 30px 25px;
-            }
-        }
-
-        @media (max-width: 600px) {
-            .navbar { padding: 12px 15px; }
-            .brand-logo { width: 35px; height: 35px; }
-            .brand-name { font-size: 1.2rem; }
-            .nav-icons { gap: 15px; }
-            .icon-btn { font-size: 1.1rem; }
-            .user-name { display: none; }
-        }
-
-        @media (max-width: 450px) {
-            .auth-form-container { padding: 25px 15px; }
-            .account-type-selector { flex-direction: column; }
-        }
-    </style>
+    <link rel="stylesheet" href="../common.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -726,91 +126,164 @@
                 <form class="auth-form" id="signupForm" onsubmit="handleSignup(event)">
                     <div class="form-msg" id="signupMsg"></div>
 
-                    <div class="input-group">
-                        <label>Account Type</label>
-                        <div class="account-type-selector">
-                            <div class="account-type-option active" id="customerOption" onclick="selectAccountType('customer')">
+                    <div class="step-indicator" id="stepIndicator"></div>
+
+                    <input type="hidden" id="accountType" value="">
+
+                    <!-- STEP 1: Choose account type -->
+                    <div class="signup-step active" id="step-type">
+                        <div class="input-group">
+                            <label>Account Type</label>
+                            <div class="account-type-selector">
+                                <div class="account-type-option" id="customerOption" onclick="selectAccountType('customer')">
+                                    <i class="fas fa-user"></i>
+                                    Customer
+                                </div>
+                                <div class="account-type-option" id="sellerOption" onclick="selectAccountType('seller')">
+                                    <i class="fas fa-store"></i>
+                                    Seller
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CUSTOMER STEP 2: Full Name + Email -->
+                    <div class="signup-step" id="step-customer-2">
+                        <div class="input-group">
+                            <label>Full Name</label>
+                            <div class="input-wrapper">
                                 <i class="fas fa-user"></i>
-                                Customer
+                                <input type="text" id="custNameInput" placeholder="Enter your full name">
                             </div>
-                            <div class="account-type-option" id="sellerOption" onclick="selectAccountType('seller')">
+                        </div>
+                        <div class="input-group">
+                            <label>Email Address</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-envelope"></i>
+                                <input type="email" id="custEmailInput" placeholder="Enter your email">
+                            </div>
+                        </div>
+                        <div class="step-actions">
+                            <button type="button" class="btn-outline-step" onclick="goToStep('step-type')"><i class="fas fa-arrow-left"></i> Back</button>
+                            <button type="button" class="btn-submit" onclick="goFromCustomerStep2()">Next <i class="fas fa-arrow-right"></i></button>
+                        </div>
+                    </div>
+
+                    <!-- CUSTOMER STEP 3: Address, Phone, Password -->
+                    <div class="signup-step" id="step-customer-3">
+                        <div class="input-group">
+                            <label>Address</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <input type="text" id="custAddressInput" placeholder="Enter your full address">
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label>Phone Number</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-phone"></i>
+                                <input type="text" id="custPhoneInput" placeholder="Enter your phone number">
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label>Password</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-lock"></i>
+                                <input type="password" id="custPasswordInput" placeholder="Create a password">
+                                <i class="fas fa-eye toggle-password" onclick="togglePassword('custPasswordInput', this)"></i>
+                            </div>
+                        </div>
+                        <div class="step-actions">
+                            <button type="button" class="btn-outline-step" onclick="goToStep('step-customer-2')"><i class="fas fa-arrow-left"></i> Back</button>
+                            <button type="submit" class="btn-submit" id="customerSubmitBtn">
+                                Create Account <i class="fas fa-user-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- SELLER STEP 2: Shop Name + Shop Owner Name -->
+                    <div class="signup-step" id="step-seller-2">
+                        <div class="input-group">
+                            <label>Shop Name</label>
+                            <div class="input-wrapper">
                                 <i class="fas fa-store"></i>
-                                Seller
+                                <input type="text" id="shopNameInput" placeholder="Enter your shop name">
                             </div>
                         </div>
-                        <input type="hidden" id="accountType" value="customer">
-                    </div>
-
-                    <div class="input-group">
-                        <label id="nameLabel">Full Name</label>
-                        <div class="input-wrapper">
-                            <i class="fas fa-user" id="nameIcon"></i>
-                            <input type="text" id="nameInput" placeholder="Enter your full name" required>
+                        <div class="input-group">
+                            <label>Shop Owner Name</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-id-badge"></i>
+                                <input type="text" id="ownerNameInput" placeholder="Enter shop owner's full name">
+                            </div>
+                        </div>
+                        <div class="step-actions">
+                            <button type="button" class="btn-outline-step" onclick="goToStep('step-type')"><i class="fas fa-arrow-left"></i> Back</button>
+                            <button type="button" class="btn-submit" onclick="goFromSellerStep2()">Next <i class="fas fa-arrow-right"></i></button>
                         </div>
                     </div>
 
-                    <div class="input-group seller-only-field" id="ownerNameGroup" style="display:none;">
-                        <label>Shop Owner Name</label>
-                        <div class="input-wrapper">
-                            <i class="fas fa-id-badge"></i>
-                            <input type="text" id="ownerNameInput" placeholder="Enter shop owner's full name">
+                    <!-- SELLER STEP 3: Email + Address -->
+                    <div class="signup-step" id="step-seller-3">
+                        <div class="input-group">
+                            <label>Email Address</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-envelope"></i>
+                                <input type="email" id="sellerEmailInput" placeholder="Enter your email">
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label>Address</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <input type="text" id="sellerAddressInput" placeholder="Enter your shop address">
+                            </div>
+                        </div>
+                        <div class="step-actions">
+                            <button type="button" class="btn-outline-step" onclick="goToStep('step-seller-2')"><i class="fas fa-arrow-left"></i> Back</button>
+                            <button type="button" class="btn-submit" onclick="goFromSellerStep3()">Next <i class="fas fa-arrow-right"></i></button>
                         </div>
                     </div>
 
-                    <div class="input-group seller-only-field" id="vatGroup" style="display:none;">
-                        <label>VAT No. <span style="color: var(--text-light); font-weight: 400;">(optional)</span></label>
-                        <div class="input-wrapper">
-                            <i class="fas fa-file-invoice"></i>
-                            <input type="text" id="vatInput" placeholder="Enter VAT registration number">
+                    <!-- SELLER STEP 4: Phone + VAT/PAN No. -->
+                    <div class="signup-step" id="step-seller-4">
+                        <div class="input-group">
+                            <label>Phone Number</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-phone"></i>
+                                <input type="text" id="sellerPhoneInput" placeholder="Enter your phone number">
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label>VAT/PAN No. <span style="color: var(--text-light); font-weight: 400;">(optional)</span></label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-file-invoice"></i>
+                                <input type="text" id="vatInput" placeholder="Enter VAT/PAN registration number">
+                            </div>
+                        </div>
+                        <div class="step-actions">
+                            <button type="button" class="btn-outline-step" onclick="goToStep('step-seller-3')"><i class="fas fa-arrow-left"></i> Back</button>
+                            <button type="button" class="btn-submit" onclick="goFromSellerStep4()">Next <i class="fas fa-arrow-right"></i></button>
                         </div>
                     </div>
 
-                    <div class="input-group">
-                        <label>Email Address</label>
-                        <div class="input-wrapper">
-                            <i class="fas fa-envelope"></i>
-                            <input type="email" id="signupEmail" placeholder="Enter your email" required>
+                    <!-- SELLER STEP 5: Password -->
+                    <div class="signup-step" id="step-seller-5">
+                        <div class="input-group">
+                            <label>Password</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-lock"></i>
+                                <input type="password" id="sellerPasswordInput" placeholder="Create a password">
+                                <i class="fas fa-eye toggle-password" onclick="togglePassword('sellerPasswordInput', this)"></i>
+                            </div>
+                        </div>
+                        <div class="step-actions">
+                            <button type="button" class="btn-outline-step" onclick="goToStep('step-seller-4')"><i class="fas fa-arrow-left"></i> Back</button>
+                            <button type="submit" class="btn-submit" id="sellerSubmitBtn">
+                                Create Account <i class="fas fa-user-plus"></i>
+                            </button>
                         </div>
                     </div>
-
-                    <div class="input-group">
-                        <label>Address</label>
-                        <div class="input-wrapper">
-                            <i class="fas fa-map-marker-alt"></i>
-                            <input type="text" id="addressInput" placeholder="Enter your full address" required>
-                        </div>
-                    </div>
-
-                    <div class="input-group">
-                        <label>Phone Number</label>
-                        <div class="input-wrapper">
-                            <i class="fas fa-phone"></i>
-                            <input type="tel" id="phoneInput" placeholder="Enter your phone number" required>
-                        </div>
-                    </div>
-
-                    <div class="input-group">
-                        <label>Password</label>
-                        <div class="input-wrapper">
-                            <i class="fas fa-lock"></i>
-                            <input type="password" id="signupPassword" placeholder="Create a password (min. 6 characters)" required minlength="6">
-                            <i class="fas fa-eye toggle-password" onclick="togglePassword('signupPassword', this)"></i>
-                        </div>
-                    </div>
-
-                    <div class="input-group" id="confirmPasswordGroup">
-                        <label>Confirm Password</label>
-                        <div class="input-wrapper">
-                            <i class="fas fa-lock"></i>
-                            <input type="password" id="confirmPassword" placeholder="Confirm your password" required>
-                            <i class="fas fa-eye toggle-password" onclick="togglePassword('confirmPassword', this)"></i>
-                        </div>
-                        <div class="error-msg" id="passwordError">Passwords do not match!</div>
-                    </div>
-
-                    <button type="submit" class="btn-submit" id="signupSubmitBtn">
-                        Create Account <i class="fas fa-user-plus"></i>
-                    </button>
 
                     <div class="form-footer">
                         Already have an account? <a onclick="switchTab('login')">Login here</a>
@@ -826,360 +299,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-database-compat.js"></script>
     <script src="../firebase-config.js"></script>
-    <script src="../session.js"></script>
-
-    <script>
-        function switchTab(tab) {
-            const loginTab = document.getElementById('loginTab');
-            const signupTab = document.getElementById('signupTab');
-            const loginForm = document.getElementById('loginForm');
-            const signupForm = document.getElementById('signupForm');
-            const formTitle = document.getElementById('formTitle');
-            const formSubtitle = document.getElementById('formSubtitle');
-
-            if (tab === 'login') {
-                loginTab.classList.add('active');
-                signupTab.classList.remove('active');
-                loginForm.classList.add('active');
-                signupForm.classList.remove('active');
-                formTitle.innerText = 'Welcome Back';
-                formSubtitle.innerText = 'Please login to your account';
-            } else {
-                signupTab.classList.add('active');
-                loginTab.classList.remove('active');
-                signupForm.classList.add('active');
-                loginForm.classList.remove('active');
-                formTitle.innerText = 'Create an Account';
-                formSubtitle.innerText = 'Join us to start ordering';
-            }
-        }
-
-        function selectAccountType(type) {
-            const customerOption = document.getElementById('customerOption');
-            const sellerOption = document.getElementById('sellerOption');
-            const accountTypeInput = document.getElementById('accountType');
-            const nameLabel = document.getElementById('nameLabel');
-            const nameInput = document.getElementById('nameInput');
-            const nameIcon = document.getElementById('nameIcon');
-            const ownerNameGroup = document.getElementById('ownerNameGroup');
-            const ownerNameInput = document.getElementById('ownerNameInput');
-            const vatGroup = document.getElementById('vatGroup');
-            const confirmPasswordGroup = document.getElementById('confirmPasswordGroup');
-            const confirmPasswordInput = document.getElementById('confirmPassword');
-            const passwordError = document.getElementById('passwordError');
-
-            accountTypeInput.value = type;
-
-            if (type === 'customer') {
-                customerOption.classList.add('active');
-                sellerOption.classList.remove('active');
-                nameLabel.innerText = 'Full Name';
-                nameInput.placeholder = 'Enter your full name';
-                nameIcon.className = 'fas fa-user';
-
-                ownerNameGroup.style.display = 'none';
-                vatGroup.style.display = 'none';
-                ownerNameInput.required = false;
-
-                confirmPasswordGroup.style.display = 'block';
-                confirmPasswordInput.required = true;
-            } else {
-                sellerOption.classList.add('active');
-                customerOption.classList.remove('active');
-                nameLabel.innerText = 'Shop Name';
-                nameInput.placeholder = 'Enter your shop name';
-                nameIcon.className = 'fas fa-store';
-
-                ownerNameGroup.style.display = 'block';
-                vatGroup.style.display = 'block';
-                ownerNameInput.required = true;
-
-                confirmPasswordGroup.style.display = 'none';
-                confirmPasswordInput.required = false;
-                confirmPasswordInput.value = '';
-                passwordError.style.display = 'none';
-            }
-        }
-
-        function togglePassword(inputId, icon) {
-            const input = document.getElementById(inputId);
-            if (input.type === 'password') {
-                input.type = 'text';
-                icon.classList.remove('fa-eye');
-                icon.classList.add('fa-eye-slash');
-            } else {
-                input.type = 'password';
-                icon.classList.remove('fa-eye-slash');
-                icon.classList.add('fa-eye');
-            }
-        }
-
-        const signupPassword = document.getElementById('signupPassword');
-        const confirmPassword = document.getElementById('confirmPassword');
-        const passwordError = document.getElementById('passwordError');
-
-        function validatePassword() {
-            const accountType = document.getElementById('accountType').value;
-
-            if (accountType === 'seller') {
-                passwordError.style.display = 'none';
-                return true;
-            }
-
-            if (signupPassword.value !== confirmPassword.value) {
-                passwordError.style.display = 'block';
-                confirmPassword.style.borderColor = 'var(--error-red)';
-                return false;
-            } else {
-                passwordError.style.display = 'none';
-                confirmPassword.style.borderColor = '#ddd';
-                return true;
-            }
-        }
-
-        signupPassword.addEventListener('input', validatePassword);
-        confirmPassword.addEventListener('input', validatePassword);
-
-        function showMsg(id, text, type) {
-            const el = document.getElementById(id);
-            el.textContent = text;
-            el.className = 'form-msg ' + type;
-        }
-
-        function clearMsg(id) {
-            const el = document.getElementById(id);
-            el.textContent = '';
-            el.className = 'form-msg';
-        }
-
-        function friendlyAuthError(err) {
-            const code = err && err.code;
-            switch (code) {
-                case 'auth/email-already-in-use': return 'An account with this email already exists. Try logging in instead.';
-                case 'auth/invalid-email': return 'Please enter a valid email address.';
-                case 'auth/weak-password': return 'Password should be at least 6 characters.';
-                case 'auth/user-not-found':
-                case 'auth/wrong-password':
-                case 'auth/invalid-credential': return 'Incorrect email or password.';
-                case 'auth/too-many-requests': return 'Too many attempts. Please wait a moment and try again.';
-                default: return (err && err.message) || 'Something went wrong. Please try again.';
-            }
-        }
-
-        function handleLogin(event) {
-            event.preventDefault();
-            clearMsg('loginMsg');
-
-            if (!window.LGChem) {
-                showMsg('loginMsg', 'Could not connect to the authentication service.', 'error');
-                return;
-            }
-
-            const email = document.getElementById('loginEmail').value.trim();
-            const password = document.getElementById('loginPassword').value;
-            const btn = document.getElementById('loginSubmitBtn');
-
-            btn.disabled = true;
-            btn.innerHTML = 'Logging in… <i class="fas fa-spinner fa-spin"></i>';
-
-            window.LGChem.auth.signInWithEmailAndPassword(email, password)
-                .then(function () {
-                    showMsg('loginMsg', 'Login successful! Redirecting…', 'success');
-                    setTimeout(function () {
-                        window.location.href = '../index.html';
-                    }, 700);
-                })
-                .catch(function (err) {
-                    showMsg('loginMsg', friendlyAuthError(err), 'error');
-                    btn.disabled = false;
-                    btn.innerHTML = 'Login <i class="fas fa-arrow-right"></i>';
-                });
-        }
-
-        function handleSignup(event) {
-            event.preventDefault();
-            clearMsg('signupMsg');
-
-            if (!validatePassword()) {
-                showMsg('signupMsg', 'Please fix the errors before submitting.', 'error');
-                return;
-            }
-
-            if (!window.LGChem) {
-                showMsg('signupMsg', 'Could not connect to the authentication service.', 'error');
-                return;
-            }
-
-            const accountType = document.getElementById('accountType').value;
-            const name = document.getElementById('nameInput').value.trim();
-            const email = document.getElementById('signupEmail').value.trim();
-            const address = document.getElementById('addressInput').value.trim();
-            const phone = document.getElementById('phoneInput').value.trim();
-            const password = document.getElementById('signupPassword').value;
-            const btn = document.getElementById('signupSubmitBtn');
-
-            const ownerName = document.getElementById('ownerNameInput').value.trim();
-            const vatNo = document.getElementById('vatInput').value.trim();
-
-            if (accountType === 'seller' && !ownerName) {
-                showMsg('signupMsg', 'Please enter the shop owner\'s name.', 'error');
-                return;
-            }
-
-            btn.disabled = true;
-            btn.innerHTML = 'Creating account… <i class="fas fa-spinner fa-spin"></i>';
-
-            const profile = {
-                accountType: accountType,
-                name: name,
-                address: address,
-                phone: phone
-            };
-
-            if (accountType === 'seller') {
-                profile.ownerName = ownerName;
-                profile.vatNo = vatNo || null;
-            }
-
-            window.LGChem.createAccount(email, password, profile)
-                .then(function (result) {
-                    const session = {
-                        uid: result.uid,
-                        email: email,
-                        name: (result.profile && result.profile.name) || email,
-                        accountType: (result.profile && result.profile.accountType) || 'customer'
-                    };
-                    window.LGSession.set(session);
-
-                    showMsg('signupMsg', 'Account created successfully! Redirecting…', 'success');
-                    setTimeout(function () {
-                        window.location.href = '../index.html';
-                    }, 900);
-                })
-                .catch(function (err) {
-                    showMsg('signupMsg', friendlyAuthError(err), 'error');
-                    btn.disabled = false;
-                    btn.innerHTML = 'Create Account <i class="fas fa-user-plus"></i>';
-                });
-        }
-
-        function handleForgotPassword() {
-            const email = document.getElementById('loginEmail').value.trim();
-            if (!email) {
-                showMsg('loginMsg', 'Enter your email above first, then click "Forgot Password?" again.', 'error');
-                return;
-            }
-            if (!window.LGChem) return;
-
-            window.LGChem.auth.sendPasswordResetEmail(email)
-                .then(function () { showMsg('loginMsg', 'Password reset email sent. Check your inbox.', 'success'); })
-                .catch(function (err) { showMsg('loginMsg', friendlyAuthError(err), 'error'); });
-        }
-
-        function initials(name) {
-            if (!name) return '?';
-            return name.trim().charAt(0).toUpperCase();
-        }
-
-        function wireUserMenu() {
-            const profileLink = document.getElementById('profileLink');
-            const userMenu = document.getElementById('userMenu');
-            const userChip = document.getElementById('userChip');
-            const userDropdown = document.getElementById('userDropdown');
-            const userAvatar = document.getElementById('userAvatar');
-            const userNameLabel = document.getElementById('userNameLabel');
-            const userTypeBadge = document.getElementById('userTypeBadge');
-            const logoutBtn = document.getElementById('logoutBtn');
-
-            userChip.addEventListener('click', function () {
-                userDropdown.classList.toggle('open');
-            });
-
-            document.addEventListener('click', function (e) {
-                if (!userMenu.contains(e.target)) {
-                    userDropdown.classList.remove('open');
-                }
-            });
-
-            logoutBtn.addEventListener('click', function () {
-                window.LGChem.signOut().then(function () {
-                    window.LGSession.clear();
-                    window.location.reload();
-                });
-            });
-
-            profileLink.addEventListener('click', function (e) {
-                e.preventDefault();
-                switchTab('login');
-                document.getElementById('authFormsWrapper').scrollIntoView({ behavior: 'smooth' });
-            });
-
-            if (!window.LGSession) return;
-
-            window.LGSession.onChange(function (session) {
-                if (session) {
-                    profileLink.style.display = 'none';
-                    userMenu.style.display = 'flex';
-                    userAvatar.textContent = initials(session.name);
-                    userNameLabel.textContent = session.name;
-                    userTypeBadge.textContent = (session.accountType || 'customer').toUpperCase();
-                    refreshCartBadge(session.uid);
-                } else {
-                    profileLink.style.display = 'inline-flex';
-                    userMenu.style.display = 'none';
-                    userDropdown.classList.remove('open');
-                    refreshCartBadge(null);
-                }
-            });
-        }
-
-        function refreshCartBadge(uid) {
-            const badge = document.getElementById('cartBadge');
-            if (!uid || !window.LGChem) {
-                badge.textContent = '0';
-                return;
-            }
-            window.LGChem.rtdb.ref('carts/' + uid).once('value')
-                .then(function (snap) {
-                    const val = snap.val();
-                    const count = val ? Object.values(val).reduce(function (sum, item) { return sum + (item.qty || 1); }, 0) : 0;
-                    badge.textContent = count;
-                })
-                .catch(function (err) { console.error('Failed to load cart count:', err); });
-        }
-
-        function wireExistingSession() {
-            if (!window.LGSession) return;
-
-            window.LGSession.onChange(function (session) {
-                const loggedInPanel = document.getElementById('loggedInPanel');
-                const authFormsWrapper = document.getElementById('authFormsWrapper');
-
-                if (session) {
-                    document.getElementById('loggedInAvatar').textContent = initials(session.name);
-                    document.getElementById('loggedInName').textContent = 'Welcome back, ' + session.name + '!';
-                    document.getElementById('loggedInEmail').textContent = session.email;
-                    loggedInPanel.style.display = 'block';
-                    authFormsWrapper.style.display = 'none';
-                } else {
-                    loggedInPanel.style.display = 'none';
-                    authFormsWrapper.style.display = 'block';
-                }
-            });
-
-            document.getElementById('loggedInLogoutBtn').addEventListener('click', function () {
-                window.LGChem.signOut().then(function () {
-                    window.LGSession.clear();
-                    window.location.reload();
-                });
-            });
-        }
-
-        document.addEventListener('DOMContentLoaded', function () {
-            wireUserMenu();
-            wireExistingSession();
-        });
-    </script>
+    <script src="../auth.js"></script>
 
 </body>
 </html>
