@@ -5,16 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LG CHEM - Login & Signup</title>
 
-    <!-- FAVICON FROM PARENT DIRECTORY -->
     <link rel="icon" type="image/png" href="../favicon.png">
 
-    <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
-        /* --- CSS VARIABLES --- */
         :root {
             --dark-blue: #002B5B;
             --bright-green: #008000;
@@ -23,10 +19,10 @@
             --text-dark: #333333;
             --text-light: #666666;
             --shadow: 0 4px 6px rgba(0,0,0,0.05);
+            --card-shadow: 0 10px 25px rgba(0,0,0,0.08);
             --error-red: #d9534f;
         }
 
-        /* --- RESET & BASE STYLES --- */
         * {
             margin: 0;
             padding: 0;
@@ -38,13 +34,191 @@
             background-color: var(--light-bg);
             color: var(--text-dark);
             display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background-color: var(--white);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 5%;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .brand-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .brand-logo {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--dark-blue);
+            background-color: var(--light-bg);
+        }
+
+        .brand-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark-blue);
+            letter-spacing: 1px;
+        }
+
+        .brand-name span {
+            color: var(--bright-green);
+        }
+
+        .nav-icons {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.3rem;
+            color: var(--dark-blue);
+            transition: color 0.3s ease, transform 0.2s ease;
+            position: relative;
+            text-decoration: none;
+        }
+
+        .icon-btn:hover {
+            color: var(--bright-green);
+            transform: scale(1.1);
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: -8px;
+            right: -10px;
+            background-color: var(--bright-green);
+            color: white;
+            font-size: 0.7rem;
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 50%;
+        }
+
+        .user-menu {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+        }
+
+        .user-chip {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--light-bg);
+            padding: 6px 14px 6px 8px;
+            border-radius: 50px;
+            cursor: pointer;
+            border: 1px solid #e5e5e5;
+        }
+
+        .user-avatar {
+            width: 28px;
+            height: 28px;
+            min-width: 28px;
+            border-radius: 50%;
+            background: var(--dark-blue);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            line-height: 1;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .user-name {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--dark-blue);
+            max-width: 120px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .user-dropdown {
+            display: none;
+            position: absolute;
+            top: 110%;
+            right: 0;
+            background: var(--white);
+            border-radius: 10px;
+            box-shadow: var(--card-shadow);
+            min-width: 180px;
+            overflow: hidden;
+            border: 1px solid #eaeaea;
+            z-index: 200;
+        }
+
+        .user-dropdown.open {
+            display: block;
+        }
+
+        .user-dropdown a, .user-dropdown button {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            text-align: left;
+            padding: 12px 16px;
+            font-size: 0.85rem;
+            color: var(--text-dark);
+            background: none;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .user-dropdown a:hover, .user-dropdown button:hover {
+            background: var(--light-bg);
+        }
+
+        .user-dropdown .logout-item {
+            color: #d9534f;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .account-type-badge {
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--bright-green);
+            background: rgba(0,128,0,0.08);
+            padding: 2px 8px;
+            border-radius: 20px;
+            display: inline-block;
+            margin: 6px 16px 0 16px;
+        }
+
+        .page-wrap {
+            flex: 1;
+            display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
             padding: 20px;
         }
 
-        /* --- AUTH CONTAINER --- */
         .auth-container {
             background: var(--white);
             border-radius: 20px;
@@ -57,7 +231,6 @@
             border: 1px solid #eaeaea;
         }
 
-        /* --- LEFT SIDE: INFO PANEL --- */
         .auth-info {
             flex: 1;
             background: linear-gradient(135deg, rgba(0, 43, 91, 0.95) 0%, rgba(0, 43, 91, 0.85) 100%),
@@ -107,7 +280,6 @@
             font-size: 1.1rem;
         }
 
-        /* --- RIGHT SIDE: FORM --- */
         .auth-form-container {
             flex: 1.2;
             padding: 50px 40px;
@@ -134,7 +306,6 @@
             margin-top: 5px;
         }
 
-        /* --- TABS (Login/Signup Toggle) --- */
         .auth-tabs {
             display: flex;
             background: var(--light-bg);
@@ -161,7 +332,6 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
 
-        /* --- FORMS --- */
         .auth-form {
             display: none;
             animation: fadeIn 0.4s ease;
@@ -225,7 +395,6 @@
             box-shadow: 0 0 0 3px rgba(0, 128, 0, 0.1);
         }
 
-        /* Account Type Selector */
         .account-type-selector {
             display: flex;
             gap: 10px;
@@ -259,7 +428,6 @@
             color: var(--bright-green);
         }
 
-        /* Password Toggle */
         .toggle-password {
             position: absolute;
             right: 15px;
@@ -278,15 +446,12 @@
             color: var(--bright-green);
         }
 
-        /* Password fields have a left icon AND a right toggle icon, so they need extra right padding.
-           Targeted by id since toggling switches type="password" -> type="text". */
         #loginPassword,
         #signupPassword,
         #confirmPassword {
             padding-right: 42px !important;
         }
 
-        /* Error / Success Message */
         .error-msg {
             color: var(--error-red);
             font-size: 0.8rem;
@@ -314,7 +479,6 @@
             background: rgba(0, 128, 0, 0.08);
         }
 
-        /* Submit Button */
         .btn-submit {
             width: 100%;
             padding: 14px;
@@ -348,7 +512,6 @@
             transform: none;
         }
 
-        /* Form Footer Text */
         .form-footer {
             text-align: center;
             margin-top: 20px;
@@ -367,7 +530,6 @@
             text-decoration: underline;
         }
 
-        /* Logged-in panel */
         .logged-in-panel {
             display: none;
             text-align: center;
@@ -417,7 +579,6 @@
             color: var(--white);
         }
 
-        /* --- RESPONSIVE DESIGN --- */
         @media (max-width: 850px) {
             .auth-container {
                 flex-direction: column;
@@ -430,11 +591,20 @@
             }
             .auth-info h2 { font-size: 1.5rem; }
             .auth-info p { font-size: 0.9rem; }
-            .auth-info ul { display: none; } /* Hide checklist on mobile */
+            .auth-info ul { display: none; }
 
             .auth-form-container {
                 padding: 30px 25px;
             }
+        }
+
+        @media (max-width: 600px) {
+            .navbar { padding: 12px 15px; }
+            .brand-logo { width: 35px; height: 35px; }
+            .brand-name { font-size: 1.2rem; }
+            .nav-icons { gap: 15px; }
+            .icon-btn { font-size: 1.1rem; }
+            .user-name { display: none; }
         }
 
         @media (max-width: 450px) {
@@ -445,9 +615,40 @@
 </head>
 <body>
 
+    <nav class="navbar">
+        <a href="../index.html" class="brand-container">
+            <img src="../favicon.png" alt="LG CHEM Logo" class="brand-logo">
+            <div class="brand-name">LG <span>CHEM</span></div>
+        </a>
+        <div class="nav-icons">
+            <a href="#" class="icon-btn" id="profileLink" aria-label="Profile">
+                <i class="fas fa-user-circle"></i>
+            </a>
+
+            <div class="user-menu" id="userMenu">
+                <div class="user-chip" id="userChip">
+                    <div class="user-avatar" id="userAvatar">?</div>
+                    <span class="user-name" id="userNameLabel">Account</span>
+                    <i class="fas fa-chevron-down" style="font-size:0.7rem;"></i>
+                </div>
+                <div class="user-dropdown" id="userDropdown">
+                    <span class="account-type-badge" id="userTypeBadge">Customer</span>
+                    <a href="../user/index.html"><i class="fas fa-id-card"></i> My Account</a>
+                    <a href="#"><i class="fas fa-box"></i> My Orders</a>
+                    <button class="logout-item" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                </div>
+            </div>
+
+            <a href="../cart.html" class="icon-btn" aria-label="Cart">
+                <i class="fas fa-shopping-cart"></i>
+                <span class="cart-badge" id="cartBadge">0</span>
+            </a>
+        </div>
+    </nav>
+
+    <div class="page-wrap">
     <div class="auth-container">
 
-        <!-- LEFT SIDE: INFO PANEL -->
         <div class="auth-info">
             <h2>LG <span>CHEM</span></h2>
             <p>Your trusted partner for quality chemical products. Sign in to your account to manage orders and access exclusive business pricing.</p>
@@ -459,10 +660,8 @@
             </ul>
         </div>
 
-        <!-- RIGHT SIDE: FORM CONTAINER -->
         <div class="auth-form-container">
 
-            <!-- LOGGED-IN STATE (shown instead of forms if a session already exists) -->
             <div class="logged-in-panel" id="loggedInPanel">
                 <div class="avatar-lg" id="loggedInAvatar">?</div>
                 <h3 id="loggedInName">Welcome back</h3>
@@ -483,13 +682,11 @@
                     <p id="formSubtitle">Please login to your account</p>
                 </div>
 
-                <!-- TABS -->
                 <div class="auth-tabs">
                     <div class="auth-tab active" id="loginTab" onclick="switchTab('login')">Login</div>
                     <div class="auth-tab" id="signupTab" onclick="switchTab('signup')">Sign Up</div>
                 </div>
 
-                <!-- LOGIN FORM -->
                 <form class="auth-form active" id="loginForm" onsubmit="handleLogin(event)">
                     <div class="form-msg" id="loginMsg"></div>
 
@@ -526,11 +723,9 @@
                     </div>
                 </form>
 
-                <!-- SIGNUP FORM -->
                 <form class="auth-form" id="signupForm" onsubmit="handleSignup(event)">
                     <div class="form-msg" id="signupMsg"></div>
 
-                    <!-- Account Type Selector -->
                     <div class="input-group">
                         <label>Account Type</label>
                         <div class="account-type-selector">
@@ -546,7 +741,6 @@
                         <input type="hidden" id="accountType" value="customer">
                     </div>
 
-                    <!-- Dynamic Name Field (Full Name / Shop Name) -->
                     <div class="input-group">
                         <label id="nameLabel">Full Name</label>
                         <div class="input-wrapper">
@@ -555,7 +749,6 @@
                         </div>
                     </div>
 
-                    <!-- SELLER-ONLY FIELDS: Shop Owner Name + VAT No. (optional) -->
                     <div class="input-group seller-only-field" id="ownerNameGroup" style="display:none;">
                         <label>Shop Owner Name</label>
                         <div class="input-wrapper">
@@ -627,17 +820,15 @@
 
         </div>
     </div>
+    </div>
 
-    <!-- FIREBASE SDK (compat build, matches firebase-config.js) -->
     <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-database-compat.js"></script>
     <script src="../firebase-config.js"></script>
     <script src="../session.js"></script>
 
-    <!-- JAVASCRIPT FOR INTERACTIVITY + REAL FIREBASE AUTH -->
     <script>
-        // --- 1. TAB SWITCHING ---
         function switchTab(tab) {
             const loginTab = document.getElementById('loginTab');
             const signupTab = document.getElementById('signupTab');
@@ -663,7 +854,6 @@
             }
         }
 
-        // --- 2. ACCOUNT TYPE TOGGLE (Customer / Seller) ---
         function selectAccountType(type) {
             const customerOption = document.getElementById('customerOption');
             const sellerOption = document.getElementById('sellerOption');
@@ -687,12 +877,10 @@
                 nameInput.placeholder = 'Enter your full name';
                 nameIcon.className = 'fas fa-user';
 
-                // Hide + stop requiring seller-only fields
                 ownerNameGroup.style.display = 'none';
                 vatGroup.style.display = 'none';
                 ownerNameInput.required = false;
 
-                // Customers confirm their password
                 confirmPasswordGroup.style.display = 'block';
                 confirmPasswordInput.required = true;
             } else {
@@ -702,12 +890,10 @@
                 nameInput.placeholder = 'Enter your shop name';
                 nameIcon.className = 'fas fa-store';
 
-                // Show seller-only fields (Shop Owner Name required, VAT No. optional)
                 ownerNameGroup.style.display = 'block';
                 vatGroup.style.display = 'block';
                 ownerNameInput.required = true;
 
-                // Sellers skip confirm-password (single password field only)
                 confirmPasswordGroup.style.display = 'none';
                 confirmPasswordInput.required = false;
                 confirmPasswordInput.value = '';
@@ -715,7 +901,6 @@
             }
         }
 
-        // --- 3. PASSWORD VISIBILITY TOGGLE ---
         function togglePassword(inputId, icon) {
             const input = document.getElementById(inputId);
             if (input.type === 'password') {
@@ -729,7 +914,6 @@
             }
         }
 
-        // --- 4. PASSWORD MATCH VALIDATION (Signup) ---
         const signupPassword = document.getElementById('signupPassword');
         const confirmPassword = document.getElementById('confirmPassword');
         const passwordError = document.getElementById('passwordError');
@@ -737,7 +921,6 @@
         function validatePassword() {
             const accountType = document.getElementById('accountType').value;
 
-            // Sellers only have one password field — nothing to compare against.
             if (accountType === 'seller') {
                 passwordError.style.display = 'none';
                 return true;
@@ -757,7 +940,6 @@
         signupPassword.addEventListener('input', validatePassword);
         confirmPassword.addEventListener('input', validatePassword);
 
-        // --- 5. MESSAGE HELPERS ---
         function showMsg(id, text, type) {
             const el = document.getElementById(id);
             el.textContent = text;
@@ -784,7 +966,6 @@
             }
         }
 
-        // --- 6. REAL FIREBASE AUTH: LOGIN ---
         function handleLogin(event) {
             event.preventDefault();
             clearMsg('loginMsg');
@@ -802,20 +983,19 @@
             btn.innerHTML = 'Logging in… <i class="fas fa-spinner fa-spin"></i>';
 
             window.LGChem.auth.signInWithEmailAndPassword(email, password)
-                .then(() => {
+                .then(function () {
                     showMsg('loginMsg', 'Login successful! Redirecting…', 'success');
-                    setTimeout(() => {
+                    setTimeout(function () {
                         window.location.href = '../index.html';
                     }, 700);
                 })
-                .catch(err => {
+                .catch(function (err) {
                     showMsg('loginMsg', friendlyAuthError(err), 'error');
                     btn.disabled = false;
                     btn.innerHTML = 'Login <i class="fas fa-arrow-right"></i>';
                 });
         }
 
-        // --- 7. REAL FIREBASE AUTH: SIGNUP ---
         function handleSignup(event) {
             event.preventDefault();
             clearMsg('signupMsg');
@@ -838,7 +1018,6 @@
             const password = document.getElementById('signupPassword').value;
             const btn = document.getElementById('signupSubmitBtn');
 
-            // Seller-only fields
             const ownerName = document.getElementById('ownerNameInput').value.trim();
             const vatNo = document.getElementById('vatInput').value.trim();
 
@@ -850,47 +1029,40 @@
             btn.disabled = true;
             btn.innerHTML = 'Creating account… <i class="fas fa-spinner fa-spin"></i>';
 
-            window.LGChem.auth.createUserWithEmailAndPassword(email, password)
-                .then(cred => {
-                    const uid = cred.user.uid;
+            const profile = {
+                accountType: accountType,
+                name: name,
+                address: address,
+                phone: phone
+            };
 
-                    // NOTE: the password is used ONLY above, to create the Firebase Auth
-                    // user. It is intentionally never included in this object, so it is
-                    // never written to Realtime Database. Firebase Auth stores/hashes the
-                    // password itself; RTDB only ever gets the account's profile details.
-                    const profile = {
-                        accountType: accountType,
-                        name: name,
+            if (accountType === 'seller') {
+                profile.ownerName = ownerName;
+                profile.vatNo = vatNo || null;
+            }
+
+            window.LGChem.createAccount(email, password, profile)
+                .then(function (result) {
+                    const session = {
+                        uid: result.uid,
                         email: email,
-                        address: address,
-                        phone: phone,
-                        createdAt: new Date().toISOString()
+                        name: (result.profile && result.profile.name) || email,
+                        accountType: (result.profile && result.profile.accountType) || 'customer'
                     };
+                    window.LGSession.set(session);
 
-                    // Only attach seller fields for seller accounts
-                    if (accountType === 'seller') {
-                        profile.ownerName = ownerName;
-                        profile.vatNo = vatNo || null;
-                    }
-
-                    // Also set the display name on the Firebase Auth user record
-                    return cred.user.updateProfile({ displayName: name })
-                        .then(() => window.LGChem.saveUserProfile(uid, profile));
-                })
-                .then(() => {
                     showMsg('signupMsg', 'Account created successfully! Redirecting…', 'success');
-                    setTimeout(() => {
+                    setTimeout(function () {
                         window.location.href = '../index.html';
                     }, 900);
                 })
-                .catch(err => {
+                .catch(function (err) {
                     showMsg('signupMsg', friendlyAuthError(err), 'error');
                     btn.disabled = false;
                     btn.innerHTML = 'Create Account <i class="fas fa-user-plus"></i>';
                 });
         }
 
-        // --- 8. FORGOT PASSWORD ---
         function handleForgotPassword() {
             const email = document.getElementById('loginEmail').value.trim();
             if (!email) {
@@ -900,14 +1072,80 @@
             if (!window.LGChem) return;
 
             window.LGChem.auth.sendPasswordResetEmail(email)
-                .then(() => showMsg('loginMsg', 'Password reset email sent. Check your inbox.', 'success'))
-                .catch(err => showMsg('loginMsg', friendlyAuthError(err), 'error'));
+                .then(function () { showMsg('loginMsg', 'Password reset email sent. Check your inbox.', 'success'); })
+                .catch(function (err) { showMsg('loginMsg', friendlyAuthError(err), 'error'); });
         }
 
-        // --- 9. IF ALREADY LOGGED IN, SHOW ACCOUNT PANEL INSTEAD OF FORMS ---
         function initials(name) {
             if (!name) return '?';
             return name.trim().charAt(0).toUpperCase();
+        }
+
+        function wireUserMenu() {
+            const profileLink = document.getElementById('profileLink');
+            const userMenu = document.getElementById('userMenu');
+            const userChip = document.getElementById('userChip');
+            const userDropdown = document.getElementById('userDropdown');
+            const userAvatar = document.getElementById('userAvatar');
+            const userNameLabel = document.getElementById('userNameLabel');
+            const userTypeBadge = document.getElementById('userTypeBadge');
+            const logoutBtn = document.getElementById('logoutBtn');
+
+            userChip.addEventListener('click', function () {
+                userDropdown.classList.toggle('open');
+            });
+
+            document.addEventListener('click', function (e) {
+                if (!userMenu.contains(e.target)) {
+                    userDropdown.classList.remove('open');
+                }
+            });
+
+            logoutBtn.addEventListener('click', function () {
+                window.LGChem.signOut().then(function () {
+                    window.LGSession.clear();
+                    window.location.reload();
+                });
+            });
+
+            profileLink.addEventListener('click', function (e) {
+                e.preventDefault();
+                switchTab('login');
+                document.getElementById('authFormsWrapper').scrollIntoView({ behavior: 'smooth' });
+            });
+
+            if (!window.LGSession) return;
+
+            window.LGSession.onChange(function (session) {
+                if (session) {
+                    profileLink.style.display = 'none';
+                    userMenu.style.display = 'flex';
+                    userAvatar.textContent = initials(session.name);
+                    userNameLabel.textContent = session.name;
+                    userTypeBadge.textContent = (session.accountType || 'customer').toUpperCase();
+                    refreshCartBadge(session.uid);
+                } else {
+                    profileLink.style.display = 'inline-flex';
+                    userMenu.style.display = 'none';
+                    userDropdown.classList.remove('open');
+                    refreshCartBadge(null);
+                }
+            });
+        }
+
+        function refreshCartBadge(uid) {
+            const badge = document.getElementById('cartBadge');
+            if (!uid || !window.LGChem) {
+                badge.textContent = '0';
+                return;
+            }
+            window.LGChem.rtdb.ref('carts/' + uid).once('value')
+                .then(function (snap) {
+                    const val = snap.val();
+                    const count = val ? Object.values(val).reduce(function (sum, item) { return sum + (item.qty || 1); }, 0) : 0;
+                    badge.textContent = count;
+                })
+                .catch(function (err) { console.error('Failed to load cart count:', err); });
         }
 
         function wireExistingSession() {
@@ -929,15 +1167,18 @@
                 }
             });
 
-            document.getElementById('loggedInLogoutBtn').addEventListener('click', () => {
-                window.LGChem.signOut().then(() => {
+            document.getElementById('loggedInLogoutBtn').addEventListener('click', function () {
+                window.LGChem.signOut().then(function () {
                     window.LGSession.clear();
                     window.location.reload();
                 });
             });
         }
 
-        document.addEventListener('DOMContentLoaded', wireExistingSession);
+        document.addEventListener('DOMContentLoaded', function () {
+            wireUserMenu();
+            wireExistingSession();
+        });
     </script>
 
 </body>

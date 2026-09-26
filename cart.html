@@ -5,16 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your Cart - LG CHEM</title>
 
-    <!-- FAVICON FROM MAIN DIRECTORY -->
     <link rel="icon" type="image/png" href="favicon.png">
 
-    <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
-        /* --- CSS VARIABLES --- */
         :root {
             --dark-blue: #002B5B;
             --bright-green: #008000;
@@ -42,7 +38,6 @@
             min-height: 100vh;
         }
 
-        /* --- NAVIGATION BAR (same as index.html) --- */
         .navbar {
             background-color: var(--white);
             display: flex;
@@ -220,7 +215,6 @@
             margin: 6px 16px 0 16px;
         }
 
-        /* --- CART PAGE CONTENT --- */
         .cart-section {
             padding: 40px 5% 60px 5%;
             max-width: 950px;
@@ -377,7 +371,6 @@
             color: #a83f3c;
         }
 
-        /* --- ORDER SUMMARY CARD --- */
         .summary-card {
             background: var(--white);
             border-radius: 15px;
@@ -446,7 +439,6 @@
             transform: none;
         }
 
-        /* --- EMPTY / LOADING / LOGGED-OUT STATES --- */
         .state-panel {
             text-align: center;
             padding: 60px 20px;
@@ -493,7 +485,6 @@
             background-color: var(--dark-blue);
         }
 
-        /* --- FOOTER --- */
         .footer {
             background-color: var(--dark-blue);
             color: var(--white);
@@ -508,7 +499,6 @@
             font-weight: 600;
         }
 
-        /* --- RESPONSIVE --- */
         @media (max-width: 800px) {
             .cart-layout {
                 grid-template-columns: 1fr;
@@ -534,19 +524,16 @@
 </head>
 <body>
 
-    <!-- TOP NAVIGATION BAR -->
     <nav class="navbar">
         <a href="index.html" class="brand-container">
             <img src="favicon.png" alt="LG CHEM Logo" class="brand-logo">
             <div class="brand-name">LG <span>CHEM</span></div>
         </a>
         <div class="nav-icons">
-            <!-- SHOWN WHEN LOGGED OUT -->
             <a href="auth/index.html" class="icon-btn" id="profileLink" aria-label="Profile">
                 <i class="fas fa-user-circle"></i>
             </a>
 
-            <!-- SHOWN WHEN LOGGED IN -->
             <div class="user-menu" id="userMenu">
                 <div class="user-chip" id="userChip">
                     <div class="user-avatar" id="userAvatar">?</div>
@@ -568,7 +555,6 @@
         </div>
     </nav>
 
-    <!-- CART CONTENT -->
     <section class="cart-section">
         <div class="cart-header">
             <h2 class="cart-title">Your <span>Cart</span></h2>
@@ -585,26 +571,22 @@
         </div>
     </section>
 
-    <!-- FOOTER -->
     <footer class="footer">
         <p>&copy; 2026 <span>LG CHEM</span>. All rights reserved.</p>
         <p style="font-size: 0.8rem; margin-top: 5px; opacity: 0.7;">Tikapur 3, Kailali, Nepal</p>
     </footer>
 
-    <!-- FIREBASE SDK (compat build, matches firebase-config.js) -->
     <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-database-compat.js"></script>
     <script src="firebase-config.js"></script>
     <script src="session.js"></script>
 
-    <!-- PAGE LOGIC: real cart from Firebase, tied to the logged-in user's id -->
     <script>
         let currentUid = null;
 
         function priceToNumber(priceStr) {
             if (!priceStr) return 0;
-            // Strips "Rs. 1,200" -> 1200
             const digits = String(priceStr).replace(/[^0-9.]/g, '');
             const n = parseFloat(digits);
             return isNaN(n) ? 0 : n;
@@ -620,7 +602,7 @@
                     <i class="fas fa-user-lock"></i>
                     <h3>Please log in to view your cart</h3>
                     <p>Your cart is tied to your account so it's there whenever you come back.</p>
-                    <a href="auth/index.html" class="shop-link"><i class="fas fa-right-to-bracket"></i> Log In / Sign Up</a>
+                    <a href="auth/index.html" class="shop-link"><i class="fas fa-right-to-bracket"></i> Log In</a>
                 </div>
             `;
         }
@@ -629,9 +611,9 @@
             document.getElementById('cartRoot').innerHTML = `
                 <div class="state-panel">
                     <i class="fas fa-cart-shopping"></i>
-                    <h3>Your cart is empty</h3>
-                    <p>Browse our products and add a few to get started.</p>
-                    <a href="index.html#products" class="shop-link"><i class="fas fa-flask"></i> Shop Products</a>
+                    <h3>No cart products found</h3>
+                    <p>You haven't added anything to your cart yet. Start exploring our products.</p>
+                    <a href="index.html#products" class="shop-link"><i class="fas fa-bag-shopping"></i> Shop Now</a>
                 </div>
             `;
         }
@@ -647,14 +629,13 @@
         }
 
         function renderCart(items) {
-            // items: array of { key, productKey, name, category, price, unit, image, qty }
             if (!items || items.length === 0) {
                 renderEmptyState();
                 return;
             }
 
             let subtotal = 0;
-            const itemsHtml = items.map(item => {
+            const itemsHtml = items.map(function (item) {
                 const lineTotal = priceToNumber(item.price) * (item.qty || 1);
                 subtotal += lineTotal;
                 return `
@@ -684,7 +665,7 @@
                         <h3>Order Summary</h3>
                         <div class="summary-row">
                             <span>Items</span>
-                            <span>${items.reduce((s, i) => s + (i.qty || 1), 0)}</span>
+                            <span>${items.reduce(function (s, i) { return s + (i.qty || 1); }, 0)}</span>
                         </div>
                         <div class="summary-row total">
                             <span>Estimated Total</span>
@@ -700,22 +681,22 @@
 
             wireCartItemControls();
 
-            document.getElementById('checkoutBtn').addEventListener('click', () => {
+            document.getElementById('checkoutBtn').addEventListener('click', function () {
                 alert('Checkout isn\\'t connected yet — this is where order placement will go.');
             });
         }
 
         function wireCartItemControls() {
-            document.querySelectorAll('.qty-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
+            document.querySelectorAll('.qty-btn').forEach(function (btn) {
+                btn.addEventListener('click', function () {
                     const key = btn.getAttribute('data-key');
                     const action = btn.getAttribute('data-action');
                     changeQty(key, action === 'inc' ? 1 : -1);
                 });
             });
 
-            document.querySelectorAll('.remove-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
+            document.querySelectorAll('.remove-btn').forEach(function (btn) {
+                btn.addEventListener('click', function () {
                     const key = btn.getAttribute('data-key');
                     removeItem(key);
                 });
@@ -728,7 +709,7 @@
 
         function changeQty(key, delta) {
             const ref = cartItemRef(key);
-            ref.once('value').then(snap => {
+            ref.once('value').then(function (snap) {
                 const item = snap.val();
                 if (!item) return;
                 const newQty = (item.qty || 1) + delta;
@@ -736,11 +717,11 @@
                     return ref.remove();
                 }
                 return ref.update({ qty: newQty });
-            }).catch(err => console.error('Failed to update quantity:', err));
+            }).catch(function (err) { console.error('Failed to update quantity:', err); });
         }
 
         function removeItem(key) {
-            cartItemRef(key).remove().catch(err => console.error('Failed to remove item:', err));
+            cartItemRef(key).remove().catch(function (err) { console.error('Failed to remove item:', err); });
         }
 
         function loadCart(uid) {
@@ -749,16 +730,14 @@
                 return;
             }
 
-            // Live-updating listener so qty/remove changes reflect immediately,
-            // and so the badge count and cart list never drift out of sync.
-            window.LGChem.rtdb.ref('carts/' + uid).on('value', snapshot => {
+            window.LGChem.rtdb.ref('carts/' + uid).on('value', function (snapshot) {
                 const val = snapshot.val();
                 const items = val
-                    ? Object.keys(val).map(key => Object.assign({ key: key }, val[key]))
+                    ? Object.keys(val).map(function (key) { return Object.assign({ key: key }, val[key]); })
                     : [];
                 renderCart(items);
                 updateBadge(items);
-            }, err => {
+            }, function (err) {
                 console.error('Failed to load cart:', err);
                 renderErrorState();
             });
@@ -766,11 +745,10 @@
 
         function updateBadge(items) {
             const badge = document.getElementById('cartBadge');
-            const count = items.reduce((sum, item) => sum + (item.qty || 1), 0);
+            const count = items.reduce(function (sum, item) { return sum + (item.qty || 1); }, 0);
             badge.textContent = count;
         }
 
-        // ---------- AUTH STATE (nav user menu, same pattern as index.html) ----------
         function initials(name) {
             if (!name) return '?';
             return name.trim().charAt(0).toUpperCase();
@@ -786,18 +764,18 @@
             const userTypeBadge = document.getElementById('userTypeBadge');
             const logoutBtn = document.getElementById('logoutBtn');
 
-            userChip.addEventListener('click', () => {
+            userChip.addEventListener('click', function () {
                 userDropdown.classList.toggle('open');
             });
 
-            document.addEventListener('click', (e) => {
+            document.addEventListener('click', function (e) {
                 if (!userMenu.contains(e.target)) {
                     userDropdown.classList.remove('open');
                 }
             });
 
-            logoutBtn.addEventListener('click', () => {
-                window.LGChem.signOut().then(() => {
+            logoutBtn.addEventListener('click', function () {
+                window.LGChem.signOut().then(function () {
                     window.LGSession.clear();
                     window.location.reload();
                 });

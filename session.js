@@ -28,7 +28,7 @@
   let firebaseConfirmed = false;
 
   function notifyListeners(session) {
-    listeners.forEach(cb => {
+    listeners.forEach(function (cb) {
       try {
         cb(session, firebaseConfirmed);
       } catch (err) {
@@ -59,6 +59,11 @@
         if (idx > -1) listeners.splice(idx, 1);
       };
     },
+    set: function (session) {
+      lastKnownSession = session;
+      writeStoredSession(session);
+      notifyListeners(session);
+    },
     clear: function () {
       lastKnownSession = null;
       writeStoredSession(null);
@@ -72,9 +77,20 @@
     notifyListeners(lastKnownSession);
   });
 
+  function sessionFromAuth(user, profile) {
+    return {
+      uid: user.uid,
+      email: user.email,
+      name: (profile && profile.name) || user.displayName || user.email,
+      accountType: (profile && profile.accountType) || 'customer'
+    };
+  }
+
   function bindToFirebase() {
     if (!window.LGChem || typeof window.LGChem.onAuthChange !== 'function') {
       console.warn('session.js: window.LGChem not found. Load firebase-config.js before session.js.');
+      firebaseConfirmed = true;
+      notifyListeners(lastKnownSession);
       return;
     }
 
@@ -88,13 +104,7 @@
         return;
       }
 
-      const session = {
-        uid: user.uid,
-        email: user.email,
-        name: (profile && profile.name) || user.displayName || user.email,
-        accountType: (profile && profile.accountType) || 'customer'
-      };
-
+      const session = sessionFromAuth(user, profile);
       lastKnownSession = session;
       writeStoredSession(session);
       notifyListeners(session);

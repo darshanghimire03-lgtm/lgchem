@@ -6,16 +6,12 @@
     <meta name="google-site-verification" content="Py2a6rlmxbYSWTwFtdBbKPvU0b-7EQ97cfKU4Nh0oDA" />
     <title>LG CHEM</title>
 
-    <!-- FAVICON FROM MAIN DIRECTORY -->
     <link rel="icon" type="image/png" href="favicon.png">
 
-    <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
-        /* --- CSS VARIABLES --- */
         :root {
             --dark-blue: #002B5B;
             --bright-green: #008000;
@@ -27,7 +23,6 @@
             --card-shadow: 0 10px 25px rgba(0,0,0,0.08);
         }
 
-        /* --- RESET & BASE STYLES --- */
         * {
             margin: 0;
             padding: 0;
@@ -43,7 +38,6 @@
             min-height: 100vh;
         }
 
-        /* --- NAVIGATION BAR --- */
         .navbar {
             background-color: var(--white);
             display: flex;
@@ -60,6 +54,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
+            text-decoration: none;
         }
 
         .brand-logo {
@@ -116,7 +111,6 @@
             border-radius: 50%;
         }
 
-        /* --- USER MENU (logged in state) --- */
         .user-menu {
             display: none;
             align-items: center;
@@ -217,7 +211,6 @@
             margin: 6px 16px 0 16px;
         }
 
-        /* --- HERO BLENDED BACKGROUND CARD SECTION --- */
         .hero-section {
             padding: 40px 5% 20px 5%;
             display: flex;
@@ -235,8 +228,6 @@
             border-top: 5px solid var(--dark-blue);
             border-bottom: 5px solid var(--bright-green);
             transition: transform 0.3s ease;
-
-            /* BACKGROUND IMAGE: Ensure 'bg-image.jpg' is in your folder */
             background-image: url('bg-image.jpg');
             background-size: cover;
             background-position: center;
@@ -299,7 +290,6 @@
             transform: translateY(-2px);
         }
 
-        /* --- PRODUCT SHOP CARDS SECTION --- */
         .products-section {
             padding: 40px 5% 60px 5%;
             max-width: 1200px;
@@ -412,7 +402,6 @@
             background-color: var(--bright-green);
         }
 
-        /* Loading / Empty State */
         .loading-text, .empty-text {
             text-align: center;
             width: 100%;
@@ -429,7 +418,6 @@
             color: #ccc;
         }
 
-        /* --- FOOTER --- */
         .footer {
             background-color: var(--dark-blue);
             color: var(--white);
@@ -444,7 +432,6 @@
             font-weight: 600;
         }
 
-        /* --- RESPONSIVE DESIGN --- */
         @media (max-width: 850px) {
             .hero-overlay {
                 background: linear-gradient(135deg, rgba(0, 43, 91, 0.95) 0%, rgba(0, 43, 91, 0.9) 100%);
@@ -477,19 +464,16 @@
 </head>
 <body>
 
-    <!-- TOP NAVIGATION BAR -->
     <nav class="navbar">
-        <div class="brand-container">
+        <a href="index.html" class="brand-container">
             <img src="favicon.png" alt="LG CHEM Logo" class="brand-logo">
             <div class="brand-name">LG <span>CHEM</span></div>
-        </div>
+        </a>
         <div class="nav-icons">
-            <!-- SHOWN WHEN LOGGED OUT -->
             <a href="auth/index.html" class="icon-btn" id="profileLink" aria-label="Profile">
                 <i class="fas fa-user-circle"></i>
             </a>
 
-            <!-- SHOWN WHEN LOGGED IN -->
             <div class="user-menu" id="userMenu">
                 <div class="user-chip" id="userChip">
                     <div class="user-avatar" id="userAvatar">?</div>
@@ -511,7 +495,6 @@
         </div>
     </nav>
 
-    <!-- HERO BLENDED BACKGROUND CARD SECTION -->
     <section class="hero-section">
         <div class="hero-card">
             <div class="hero-overlay"></div>
@@ -524,7 +507,6 @@
         </div>
     </section>
 
-    <!-- PRODUCT SHOP CARDS SECTION -->
     <section class="products-section" id="products">
         <h2 class="section-title">Our <span>Products</span></h2>
         <div class="product-grid" id="productGrid">
@@ -532,25 +514,18 @@
         </div>
     </section>
 
-    <!-- FOOTER -->
     <footer class="footer">
         <p>&copy; 2026 <span>LG CHEM</span>. All rights reserved.</p>
         <p style="font-size: 0.8rem; margin-top: 5px; opacity: 0.7;">Tikapur 3, Kailali, Nepal</p>
     </footer>
 
-    <!-- FIREBASE SDK (compat build, matches firebase-config.js) -->
     <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-database-compat.js"></script>
     <script src="firebase-config.js"></script>
     <script src="session.js"></script>
 
-    <!-- PAGE LOGIC: real products from Firebase + shared auth state -->
     <script>
-        // ---------- PRODUCTS: loaded live from Firebase Realtime Database ----------
-        // Products live under the "products" node in your Realtime Database, e.g.:
-        // products/
-        //   -Nxyz123: { name, category, price, unit, image }
         function renderProducts(products) {
             const gridContainer = document.getElementById('productGrid');
             gridContainer.innerHTML = '';
@@ -564,7 +539,7 @@
                 return;
             }
 
-            products.forEach(product => {
+            products.forEach(function (product) {
                 const card = document.createElement('div');
                 card.classList.add('product-card');
 
@@ -586,7 +561,7 @@
                 `;
 
                 const addBtn = card.querySelector('.add-to-cart-btn');
-                addBtn.addEventListener('click', () => addToCart(product));
+                addBtn.addEventListener('click', function () { addToCart(product); });
 
                 gridContainer.appendChild(card);
             });
@@ -600,21 +575,20 @@
             }
 
             window.LGChem.rtdb.ref('products').once('value')
-                .then(snapshot => {
+                .then(function (snapshot) {
                     const val = snapshot.val();
                     const products = val
-                        ? Object.keys(val).map(key => Object.assign({ key: key }, val[key]))
+                        ? Object.keys(val).map(function (key) { return Object.assign({ key: key }, val[key]); })
                         : [];
                     renderProducts(products);
                 })
-                .catch(err => {
+                .catch(function (err) {
                     console.error('Failed to load products:', err);
                     document.getElementById('productGrid').innerHTML =
                         '<div class="empty-text"><i class="fas fa-triangle-exclamation"></i>Failed to load products. Please try again later.</div>';
                 });
         }
 
-        // ---------- CART: stored per-user under carts/{uid}/{productKey} ----------
         function addToCart(product) {
             const uid = window.LGSession && window.LGSession.getUserId();
 
@@ -630,7 +604,7 @@
             }
 
             const cartItemRef = window.LGChem.rtdb.ref('carts/' + uid + '/' + product.key);
-            cartItemRef.once('value').then(snap => {
+            cartItemRef.once('value').then(function (snap) {
                 const existing = snap.val();
                 const newQty = (existing && existing.qty ? existing.qty : 0) + 1;
                 return cartItemRef.set({
@@ -642,7 +616,7 @@
                     image: product.image || '',
                     qty: newQty
                 });
-            }).catch(err => console.error('Failed to add to cart:', err));
+            }).catch(function (err) { console.error('Failed to add to cart:', err); });
         }
 
         function refreshCartBadge(uid) {
@@ -652,15 +626,14 @@
                 return;
             }
             window.LGChem.rtdb.ref('carts/' + uid).once('value')
-                .then(snap => {
+                .then(function (snap) {
                     const val = snap.val();
-                    const count = val ? Object.values(val).reduce((sum, item) => sum + (item.qty || 1), 0) : 0;
+                    const count = val ? Object.values(val).reduce(function (sum, item) { return sum + (item.qty || 1); }, 0) : 0;
                     badge.textContent = count;
                 })
-                .catch(err => console.error('Failed to load cart count:', err));
+                .catch(function (err) { console.error('Failed to load cart count:', err); });
         }
 
-        // ---------- AUTH STATE: shared across pages via session.js ----------
         function initials(name) {
             if (!name) return '?';
             return name.trim().charAt(0).toUpperCase();
@@ -676,18 +649,18 @@
             const userTypeBadge = document.getElementById('userTypeBadge');
             const logoutBtn = document.getElementById('logoutBtn');
 
-            userChip.addEventListener('click', () => {
+            userChip.addEventListener('click', function () {
                 userDropdown.classList.toggle('open');
             });
 
-            document.addEventListener('click', (e) => {
+            document.addEventListener('click', function (e) {
                 if (!userMenu.contains(e.target)) {
                     userDropdown.classList.remove('open');
                 }
             });
 
-            logoutBtn.addEventListener('click', () => {
-                window.LGChem.signOut().then(() => {
+            logoutBtn.addEventListener('click', function () {
+                window.LGChem.signOut().then(function () {
                     window.LGSession.clear();
                     window.location.reload();
                 });
@@ -712,7 +685,7 @@
             });
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', function () {
             loadProductsFromFirebase();
             wireUserMenu();
         });
