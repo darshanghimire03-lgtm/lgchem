@@ -5,15 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google-site-verification" content="Py2a6rlmxbYSWTwFtdBbKPvU0b-7EQ97cfKU4Nh0oDA" />
     <title>LG CHEM</title>
-    
+
     <!-- FAVICON FROM MAIN DIRECTORY -->
     <link rel="icon" type="image/png" href="favicon.png">
-    
+
     <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
+
     <style>
         /* --- CSS VARIABLES --- */
         :root {
@@ -68,7 +68,7 @@
             border-radius: 50%;
             object-fit: cover;
             border: 2px solid var(--dark-blue);
-            background-color: var(--light-bg); 
+            background-color: var(--light-bg);
         }
 
         .brand-name {
@@ -116,6 +116,107 @@
             border-radius: 50%;
         }
 
+        /* --- USER MENU (logged in state) --- */
+        .user-menu {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+        }
+
+        .user-chip {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--light-bg);
+            padding: 6px 14px 6px 8px;
+            border-radius: 50px;
+            cursor: pointer;
+            border: 1px solid #e5e5e5;
+        }
+
+        .user-avatar {
+            width: 28px;
+            height: 28px;
+            min-width: 28px;
+            border-radius: 50%;
+            background: var(--dark-blue);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            line-height: 1;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .user-name {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--dark-blue);
+            max-width: 120px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .user-dropdown {
+            display: none;
+            position: absolute;
+            top: 110%;
+            right: 0;
+            background: var(--white);
+            border-radius: 10px;
+            box-shadow: var(--card-shadow);
+            min-width: 180px;
+            overflow: hidden;
+            border: 1px solid #eaeaea;
+            z-index: 200;
+        }
+
+        .user-dropdown.open {
+            display: block;
+        }
+
+        .user-dropdown a, .user-dropdown button {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            text-align: left;
+            padding: 12px 16px;
+            font-size: 0.85rem;
+            color: var(--text-dark);
+            background: none;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .user-dropdown a:hover, .user-dropdown button:hover {
+            background: var(--light-bg);
+        }
+
+        .user-dropdown .logout-item {
+            color: #d9534f;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .account-type-badge {
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--bright-green);
+            background: rgba(0,128,0,0.08);
+            padding: 2px 8px;
+            border-radius: 20px;
+            display: inline-block;
+            margin: 6px 16px 0 16px;
+        }
+
         /* --- HERO BLENDED BACKGROUND CARD SECTION --- */
         .hero-section {
             padding: 40px 5% 20px 5%;
@@ -134,13 +235,13 @@
             border-top: 5px solid var(--dark-blue);
             border-bottom: 5px solid var(--bright-green);
             transition: transform 0.3s ease;
-            
+
             /* BACKGROUND IMAGE: Ensure 'bg-image.jpg' is in your folder */
             background-image: url('bg-image.jpg');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
-            background-color: var(--dark-blue); 
+            background-color: var(--dark-blue);
         }
 
         .hero-card:hover {
@@ -311,14 +412,21 @@
             background-color: var(--bright-green);
         }
 
-        /* Loading State */
-        .loading-text {
+        /* Loading / Empty State */
+        .loading-text, .empty-text {
             text-align: center;
             width: 100%;
             padding: 40px;
             color: var(--text-light);
             font-size: 1.1rem;
             grid-column: 1 / -1;
+        }
+
+        .empty-text i {
+            display: block;
+            font-size: 2rem;
+            margin-bottom: 15px;
+            color: #ccc;
         }
 
         /* --- FOOTER --- */
@@ -355,11 +463,12 @@
             .brand-name { font-size: 1.2rem; }
             .nav-icons { gap: 15px; }
             .icon-btn { font-size: 1.1rem; }
+            .user-name { display: none; }
             .hero-section { padding: 20px 15px; }
             .hero-content { padding: 30px 20px; }
             .hero-content p { font-size: 0.95rem; }
             .shop-btn { padding: 12px 30px; font-size: 0.95rem; }
-            
+
             .products-section { padding: 20px 15px 40px 15px; }
             .section-title { font-size: 1.5rem; }
             .product-grid { grid-template-columns: 1fr; }
@@ -375,14 +484,30 @@
             <div class="brand-name">LG <span>CHEM</span></div>
         </div>
         <div class="nav-icons">
-            <!-- PROFILE ICON LINKED TO AUTH PAGE -->
-            <a href="auth/index.html" class="icon-btn" aria-label="Profile">
+            <!-- SHOWN WHEN LOGGED OUT -->
+            <a href="auth/index.html" class="icon-btn" id="profileLink" aria-label="Profile">
                 <i class="fas fa-user-circle"></i>
             </a>
-            <button class="icon-btn" aria-label="Cart">
+
+            <!-- SHOWN WHEN LOGGED IN -->
+            <div class="user-menu" id="userMenu">
+                <div class="user-chip" id="userChip">
+                    <div class="user-avatar" id="userAvatar">?</div>
+                    <span class="user-name" id="userNameLabel">Account</span>
+                    <i class="fas fa-chevron-down" style="font-size:0.7rem;"></i>
+                </div>
+                <div class="user-dropdown" id="userDropdown">
+                    <span class="account-type-badge" id="userTypeBadge">Customer</span>
+                    <a href="user/index.html"><i class="fas fa-id-card"></i> My Account</a>
+                    <a href="#"><i class="fas fa-box"></i> My Orders</a>
+                    <button class="logout-item" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                </div>
+            </div>
+
+            <a href="cart.html" class="icon-btn" aria-label="Cart">
                 <i class="fas fa-shopping-cart"></i>
-                <span class="cart-badge">0</span>
-            </button>
+                <span class="cart-badge" id="cartBadge">0</span>
+            </a>
         </div>
     </nav>
 
@@ -413,61 +538,183 @@
         <p style="font-size: 0.8rem; margin-top: 5px; opacity: 0.7;">Tikapur 3, Kailali, Nepal</p>
     </footer>
 
-    <!-- JAVASCRIPT TO LOAD DEMO.JSON WITH FALLBACK -->
-    <script>
-        // 1. BUILT-IN FALLBACK DATA (In case local JSON fetching is blocked by the browser)
-        const fallbackData = [
-            { id: 1, name: "Sulfuric Acid", category: "Industrial CHEMicals", price: "Rs. 1,200", unit: "per liter", image: "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?auto=format&fit=crop&w=500&q=80" },
-            { id: 2, name: "Sodium Hydroxide", category: "Laboratory Reagents", price: "Rs. 850", unit: "per kg", image: "https://images.unsplash.com/photo-1603126857599-f6e157ef148a?auto=format&fit=crop&w=500&q=80" },
-            { id: 3, name: "Hydrochloric Acid", category: "Industrial CHEMicals", price: "Rs. 950", unit: "per liter", image: "https://images.unsplash.com/photo-1581093458791-9f302e6d4d9e?auto=format&fit=crop&w=500&q=80" },
-            { id: 4, name: "Ethanol 99%", category: "Solvents", price: "Rs. 1,500", unit: "per liter", image: "https://images.unsplash.com/photo-1615486364066-3a9a5c1e7c4a?auto=format&fit=crop&w=500&q=80" },
-            { id: 5, name: "Acetone", category: "Solvents", price: "Rs. 1,100", unit: "per liter", image: "https://images.unsplash.com/photo-1554475901-4538ddfbccc2?auto=format&fit=crop&w=500&q=80" },
-            { id: 6, name: "Citric Acid", category: "Food Grade CHEMicals", price: "Rs. 600", unit: "per kg", image: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=500&q=80" }
-        ];
+    <!-- FIREBASE SDK (compat build, matches firebase-config.js) -->
+    <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-database-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="session.js"></script>
 
-        // 2. FUNCTION TO RENDER CARDS
+    <!-- PAGE LOGIC: real products from Firebase + shared auth state -->
+    <script>
+        // ---------- PRODUCTS: loaded live from Firebase Realtime Database ----------
+        // Products live under the "products" node in your Realtime Database, e.g.:
+        // products/
+        //   -Nxyz123: { name, category, price, unit, image }
         function renderProducts(products) {
             const gridContainer = document.getElementById('productGrid');
-            gridContainer.innerHTML = ''; 
+            gridContainer.innerHTML = '';
+
+            if (!products || products.length === 0) {
+                gridContainer.innerHTML = `
+                    <div class="empty-text">
+                        <i class="fas fa-flask"></i>
+                        No products available right now. Please check back soon.
+                    </div>`;
+                return;
+            }
 
             products.forEach(product => {
                 const card = document.createElement('div');
                 card.classList.add('product-card');
 
                 card.innerHTML = `
-                    <img src="${product.image}" alt="${product.name}" class="product-image" onerror="this.src='https://via.placeholder.com/300x200?text=No+Image'">
+                    <img src="${product.image || 'https://via.placeholder.com/300x200?text=No+Image'}" alt="${product.name || ''}" class="product-image" onerror="this.src='https://via.placeholder.com/300x200?text=No+Image'">
                     <div class="product-info">
-                        <div class="product-category">${product.category}</div>
-                        <div class="product-name">${product.name}</div>
+                        <div class="product-category">${product.category || ''}</div>
+                        <div class="product-name">${product.name || 'Unnamed product'}</div>
                         <div class="product-price-row">
                             <div>
-                                <div class="product-price">${product.price}</div>
-                                <div class="product-unit">${product.unit}</div>
+                                <div class="product-price">${product.price || ''}</div>
+                                <div class="product-unit">${product.unit || ''}</div>
                             </div>
-                            <button class="add-to-cart-btn">
+                            <button class="add-to-cart-btn" data-key="${product.key || ''}">
                                 <i class="fas fa-cart-plus"></i> Add
                             </button>
                         </div>
                     </div>
                 `;
+
+                const addBtn = card.querySelector('.add-to-cart-btn');
+                addBtn.addEventListener('click', () => addToCart(product));
+
                 gridContainer.appendChild(card);
             });
         }
 
-        // 3. EXECUTE ON PAGE LOAD
-        document.addEventListener('DOMContentLoaded', () => {
-            fetch('demo.json')
-                .then(response => {
-                    if (!response.ok) throw new Error('Network response was not ok');
-                    return response.json();
+        function loadProductsFromFirebase() {
+            if (!window.LGChem || !window.LGChem.rtdb) {
+                document.getElementById('productGrid').innerHTML =
+                    '<div class="empty-text"><i class="fas fa-triangle-exclamation"></i>Could not connect to the store database.</div>';
+                return;
+            }
+
+            window.LGChem.rtdb.ref('products').once('value')
+                .then(snapshot => {
+                    const val = snapshot.val();
+                    const products = val
+                        ? Object.keys(val).map(key => Object.assign({ key: key }, val[key]))
+                        : [];
+                    renderProducts(products);
                 })
-                .then(data => {
-                    renderProducts(data);
-                })
-                .catch(error => {
-                    console.warn('Could not load demo.json. Using fallback data.');
-                    renderProducts(fallbackData);
+                .catch(err => {
+                    console.error('Failed to load products:', err);
+                    document.getElementById('productGrid').innerHTML =
+                        '<div class="empty-text"><i class="fas fa-triangle-exclamation"></i>Failed to load products. Please try again later.</div>';
                 });
+        }
+
+        // ---------- CART: stored per-user under carts/{uid}/{productKey} ----------
+        function addToCart(product) {
+            const uid = window.LGSession && window.LGSession.getUserId();
+
+            if (!uid) {
+                alert('Please log in to add items to your cart.');
+                window.location.href = 'auth/index.html';
+                return;
+            }
+
+            if (!product.key) {
+                console.error('Product is missing a key, cannot add to cart:', product);
+                return;
+            }
+
+            const cartItemRef = window.LGChem.rtdb.ref('carts/' + uid + '/' + product.key);
+            cartItemRef.once('value').then(snap => {
+                const existing = snap.val();
+                const newQty = (existing && existing.qty ? existing.qty : 0) + 1;
+                return cartItemRef.set({
+                    productKey: product.key,
+                    name: product.name || 'Unnamed product',
+                    category: product.category || '',
+                    price: product.price || '',
+                    unit: product.unit || '',
+                    image: product.image || '',
+                    qty: newQty
+                });
+            }).catch(err => console.error('Failed to add to cart:', err));
+        }
+
+        function refreshCartBadge(uid) {
+            const badge = document.getElementById('cartBadge');
+            if (!uid || !window.LGChem) {
+                badge.textContent = '0';
+                return;
+            }
+            window.LGChem.rtdb.ref('carts/' + uid).once('value')
+                .then(snap => {
+                    const val = snap.val();
+                    const count = val ? Object.values(val).reduce((sum, item) => sum + (item.qty || 1), 0) : 0;
+                    badge.textContent = count;
+                })
+                .catch(err => console.error('Failed to load cart count:', err));
+        }
+
+        // ---------- AUTH STATE: shared across pages via session.js ----------
+        function initials(name) {
+            if (!name) return '?';
+            return name.trim().charAt(0).toUpperCase();
+        }
+
+        function wireUserMenu() {
+            const profileLink = document.getElementById('profileLink');
+            const userMenu = document.getElementById('userMenu');
+            const userChip = document.getElementById('userChip');
+            const userDropdown = document.getElementById('userDropdown');
+            const userAvatar = document.getElementById('userAvatar');
+            const userNameLabel = document.getElementById('userNameLabel');
+            const userTypeBadge = document.getElementById('userTypeBadge');
+            const logoutBtn = document.getElementById('logoutBtn');
+
+            userChip.addEventListener('click', () => {
+                userDropdown.classList.toggle('open');
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!userMenu.contains(e.target)) {
+                    userDropdown.classList.remove('open');
+                }
+            });
+
+            logoutBtn.addEventListener('click', () => {
+                window.LGChem.signOut().then(() => {
+                    window.LGSession.clear();
+                    window.location.reload();
+                });
+            });
+
+            if (!window.LGSession) return;
+
+            window.LGSession.onChange(function (session) {
+                if (session) {
+                    profileLink.style.display = 'none';
+                    userMenu.style.display = 'flex';
+                    userAvatar.textContent = initials(session.name);
+                    userNameLabel.textContent = session.name;
+                    userTypeBadge.textContent = (session.accountType || 'customer').toUpperCase();
+                    refreshCartBadge(session.uid);
+                } else {
+                    profileLink.style.display = 'inline-flex';
+                    userMenu.style.display = 'none';
+                    userDropdown.classList.remove('open');
+                    refreshCartBadge(null);
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadProductsFromFirebase();
+            wireUserMenu();
         });
     </script>
 

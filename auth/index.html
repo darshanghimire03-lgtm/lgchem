@@ -4,15 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LG CHEM - Login & Signup</title>
-    
+
     <!-- FAVICON FROM PARENT DIRECTORY -->
     <link rel="icon" type="image/png" href="../favicon.png">
-    
+
     <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
+
     <style>
         /* --- CSS VARIABLES --- */
         :root {
@@ -60,7 +60,7 @@
         /* --- LEFT SIDE: INFO PANEL --- */
         .auth-info {
             flex: 1;
-            background: linear-gradient(135deg, rgba(0, 43, 91, 0.95) 0%, rgba(0, 43, 91, 0.85) 100%), 
+            background: linear-gradient(135deg, rgba(0, 43, 91, 0.95) 0%, rgba(0, 43, 91, 0.85) 100%),
                         url('https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?auto=format&fit=crop&w=800&q=80');
             background-size: cover;
             background-position: center;
@@ -195,14 +195,17 @@
             align-items: center;
         }
 
-        .input-wrapper i {
+        .input-wrapper > i:not(.toggle-password) {
             position: absolute;
             left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
             color: var(--text-light);
             font-size: 0.9rem;
+            pointer-events: none;
         }
 
-        .input-group input, 
+        .input-group input,
         .input-group select {
             width: 100%;
             padding: 12px 15px 12px 40px;
@@ -215,7 +218,7 @@
             color: var(--text-dark);
         }
 
-        .input-group input:focus, 
+        .input-group input:focus,
         .input-group select:focus {
             outline: none;
             border-color: var(--bright-green);
@@ -260,21 +263,55 @@
         .toggle-password {
             position: absolute;
             right: 15px;
+            left: auto;
+            top: 50%;
+            transform: translateY(-50%);
             cursor: pointer;
             color: var(--text-light);
-            font-size: 0.9rem;
+            font-size: 0.95rem;
+            width: 20px;
+            text-align: center;
+            z-index: 2;
         }
 
         .toggle-password:hover {
             color: var(--bright-green);
         }
 
-        /* Error Message */
+        /* Password fields have a left icon AND a right toggle icon, so they need extra right padding.
+           Targeted by id since toggling switches type="password" -> type="text". */
+        #loginPassword,
+        #signupPassword,
+        #confirmPassword {
+            padding-right: 42px !important;
+        }
+
+        /* Error / Success Message */
         .error-msg {
             color: var(--error-red);
             font-size: 0.8rem;
             margin-top: 5px;
             display: none;
+        }
+
+        .form-msg {
+            font-size: 0.85rem;
+            margin-bottom: 15px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .form-msg.error {
+            display: block;
+            color: var(--error-red);
+            background: rgba(217, 83, 79, 0.08);
+        }
+
+        .form-msg.success {
+            display: block;
+            color: var(--bright-green);
+            background: rgba(0, 128, 0, 0.08);
         }
 
         /* Submit Button */
@@ -305,6 +342,12 @@
             transform: translateY(0);
         }
 
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
         /* Form Footer Text */
         .form-footer {
             text-align: center;
@@ -324,6 +367,56 @@
             text-decoration: underline;
         }
 
+        /* Logged-in panel */
+        .logged-in-panel {
+            display: none;
+            text-align: center;
+        }
+
+        .logged-in-panel .avatar-lg {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: var(--dark-blue);
+            color: var(--white);
+            font-size: 1.8rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px auto;
+            text-transform: uppercase;
+        }
+
+        .logged-in-panel h3 {
+            color: var(--dark-blue);
+            margin-bottom: 6px;
+        }
+
+        .logged-in-panel p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 25px;
+        }
+
+        .btn-secondary {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--white);
+            color: var(--dark-blue);
+            border: 2px solid var(--dark-blue);
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 12px;
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--dark-blue);
+            color: var(--white);
+        }
+
         /* --- RESPONSIVE DESIGN --- */
         @media (max-width: 850px) {
             .auth-container {
@@ -338,7 +431,7 @@
             .auth-info h2 { font-size: 1.5rem; }
             .auth-info p { font-size: 0.9rem; }
             .auth-info ul { display: none; } /* Hide checklist on mobile */
-            
+
             .auth-form-container {
                 padding: 30px 25px;
             }
@@ -353,7 +446,7 @@
 <body>
 
     <div class="auth-container">
-        
+
         <!-- LEFT SIDE: INFO PANEL -->
         <div class="auth-info">
             <h2>LG <span>CHEM</span></h2>
@@ -368,137 +461,181 @@
 
         <!-- RIGHT SIDE: FORM CONTAINER -->
         <div class="auth-form-container">
-            
-            <div class="form-header">
-                <h3 id="formTitle">Welcome Back</h3>
-                <p id="formSubtitle">Please login to your account</p>
+
+            <!-- LOGGED-IN STATE (shown instead of forms if a session already exists) -->
+            <div class="logged-in-panel" id="loggedInPanel">
+                <div class="avatar-lg" id="loggedInAvatar">?</div>
+                <h3 id="loggedInName">Welcome back</h3>
+                <p id="loggedInEmail">you@example.com</p>
+                <a href="../index.html" style="text-decoration:none;">
+                    <button class="btn-secondary" type="button">
+                        <i class="fas fa-store"></i> Go to Store
+                    </button>
+                </a>
+                <button class="btn-submit" id="loggedInLogoutBtn" type="button" style="background-color:#d9534f;">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
             </div>
 
-            <!-- TABS -->
-            <div class="auth-tabs">
-                <div class="auth-tab active" id="loginTab" onclick="switchTab('login')">Login</div>
-                <div class="auth-tab" id="signupTab" onclick="switchTab('signup')">Sign Up</div>
+            <div id="authFormsWrapper">
+                <div class="form-header">
+                    <h3 id="formTitle">Welcome Back</h3>
+                    <p id="formSubtitle">Please login to your account</p>
+                </div>
+
+                <!-- TABS -->
+                <div class="auth-tabs">
+                    <div class="auth-tab active" id="loginTab" onclick="switchTab('login')">Login</div>
+                    <div class="auth-tab" id="signupTab" onclick="switchTab('signup')">Sign Up</div>
+                </div>
+
+                <!-- LOGIN FORM -->
+                <form class="auth-form active" id="loginForm" onsubmit="handleLogin(event)">
+                    <div class="form-msg" id="loginMsg"></div>
+
+                    <div class="input-group">
+                        <label>Email Address</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" id="loginEmail" placeholder="Enter your email" required>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Password</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="loginPassword" placeholder="Enter your password" required>
+                            <i class="fas fa-eye toggle-password" onclick="togglePassword('loginPassword', this)"></i>
+                        </div>
+                    </div>
+
+                    <div class="input-group" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <label style="display: flex; align-items: center; gap: 5px; font-weight: 400; margin-bottom: 0; cursor: pointer;">
+                            <input type="checkbox" style="width: auto; padding: 0; margin-right: 5px;"> Remember me
+                        </label>
+                        <a onclick="handleForgotPassword()" style="font-size: 0.8rem; color: var(--bright-green); text-decoration: none; font-weight: 600; cursor:pointer;">Forgot Password?</a>
+                    </div>
+
+                    <button type="submit" class="btn-submit" id="loginSubmitBtn">
+                        Login <i class="fas fa-arrow-right"></i>
+                    </button>
+
+                    <div class="form-footer">
+                        Don't have an account? <a onclick="switchTab('signup')">Sign up here</a>
+                    </div>
+                </form>
+
+                <!-- SIGNUP FORM -->
+                <form class="auth-form" id="signupForm" onsubmit="handleSignup(event)">
+                    <div class="form-msg" id="signupMsg"></div>
+
+                    <!-- Account Type Selector -->
+                    <div class="input-group">
+                        <label>Account Type</label>
+                        <div class="account-type-selector">
+                            <div class="account-type-option active" id="customerOption" onclick="selectAccountType('customer')">
+                                <i class="fas fa-user"></i>
+                                Customer
+                            </div>
+                            <div class="account-type-option" id="sellerOption" onclick="selectAccountType('seller')">
+                                <i class="fas fa-store"></i>
+                                Seller
+                            </div>
+                        </div>
+                        <input type="hidden" id="accountType" value="customer">
+                    </div>
+
+                    <!-- Dynamic Name Field (Full Name / Shop Name) -->
+                    <div class="input-group">
+                        <label id="nameLabel">Full Name</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-user" id="nameIcon"></i>
+                            <input type="text" id="nameInput" placeholder="Enter your full name" required>
+                        </div>
+                    </div>
+
+                    <!-- SELLER-ONLY FIELDS: Shop Owner Name + VAT No. (optional) -->
+                    <div class="input-group seller-only-field" id="ownerNameGroup" style="display:none;">
+                        <label>Shop Owner Name</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-id-badge"></i>
+                            <input type="text" id="ownerNameInput" placeholder="Enter shop owner's full name">
+                        </div>
+                    </div>
+
+                    <div class="input-group seller-only-field" id="vatGroup" style="display:none;">
+                        <label>VAT No. <span style="color: var(--text-light); font-weight: 400;">(optional)</span></label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-file-invoice"></i>
+                            <input type="text" id="vatInput" placeholder="Enter VAT registration number">
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Email Address</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" id="signupEmail" placeholder="Enter your email" required>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Address</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <input type="text" id="addressInput" placeholder="Enter your full address" required>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Phone Number</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-phone"></i>
+                            <input type="tel" id="phoneInput" placeholder="Enter your phone number" required>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Password</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="signupPassword" placeholder="Create a password (min. 6 characters)" required minlength="6">
+                            <i class="fas fa-eye toggle-password" onclick="togglePassword('signupPassword', this)"></i>
+                        </div>
+                    </div>
+
+                    <div class="input-group" id="confirmPasswordGroup">
+                        <label>Confirm Password</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="confirmPassword" placeholder="Confirm your password" required>
+                            <i class="fas fa-eye toggle-password" onclick="togglePassword('confirmPassword', this)"></i>
+                        </div>
+                        <div class="error-msg" id="passwordError">Passwords do not match!</div>
+                    </div>
+
+                    <button type="submit" class="btn-submit" id="signupSubmitBtn">
+                        Create Account <i class="fas fa-user-plus"></i>
+                    </button>
+
+                    <div class="form-footer">
+                        Already have an account? <a onclick="switchTab('login')">Login here</a>
+                    </div>
+                </form>
             </div>
-
-            <!-- LOGIN FORM -->
-            <form class="auth-form active" id="loginForm" onsubmit="handleLogin(event)">
-                <div class="input-group">
-                    <label>Email Address</label>
-                    <div class="input-wrapper">
-                        <i class="fas fa-envelope"></i>
-                        <input type="email" placeholder="Enter your email" required>
-                    </div>
-                </div>
-
-                <div class="input-group">
-                    <label>Password</label>
-                    <div class="input-wrapper">
-                        <i class="fas fa-lock"></i>
-                        <input type="password" id="loginPassword" placeholder="Enter your password" required>
-                        <i class="fas fa-eye toggle-password" onclick="togglePassword('loginPassword', this)"></i>
-                    </div>
-                </div>
-
-                <div class="input-group" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                    <label style="display: flex; align-items: center; gap: 5px; font-weight: 400; margin-bottom: 0; cursor: pointer;">
-                        <input type="checkbox" style="width: auto; padding: 0; margin-right: 5px;"> Remember me
-                    </label>
-                    <a href="#" style="font-size: 0.8rem; color: var(--bright-green); text-decoration: none; font-weight: 600;">Forgot Password?</a>
-                </div>
-
-                <button type="submit" class="btn-submit">
-                    Login <i class="fas fa-arrow-right"></i>
-                </button>
-
-                <div class="form-footer">
-                    Don't have an account? <a onclick="switchTab('signup')">Sign up here</a>
-                </div>
-            </form>
-
-            <!-- SIGNUP FORM -->
-            <form class="auth-form" id="signupForm" onsubmit="handleSignup(event)">
-                
-                <!-- Account Type Selector -->
-                <div class="input-group">
-                    <label>Account Type</label>
-                    <div class="account-type-selector">
-                        <div class="account-type-option active" id="customerOption" onclick="selectAccountType('customer')">
-                            <i class="fas fa-user"></i>
-                            Customer
-                        </div>
-                        <div class="account-type-option" id="sellerOption" onclick="selectAccountType('seller')">
-                            <i class="fas fa-store"></i>
-                            Seller
-                        </div>
-                    </div>
-                    <input type="hidden" id="accountType" value="customer">
-                </div>
-
-                <!-- Dynamic Name Field (Full Name / Shop Name) -->
-                <div class="input-group">
-                    <label id="nameLabel">Full Name</label>
-                    <div class="input-wrapper">
-                        <i class="fas fa-user" id="nameIcon"></i>
-                        <input type="text" id="nameInput" placeholder="Enter your full name" required>
-                    </div>
-                </div>
-
-                <div class="input-group">
-                    <label>Email Address</label>
-                    <div class="input-wrapper">
-                        <i class="fas fa-envelope"></i>
-                        <input type="email" placeholder="Enter your email" required>
-                    </div>
-                </div>
-
-                <div class="input-group">
-                    <label>Address</label>
-                    <div class="input-wrapper">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <input type="text" placeholder="Enter your full address" required>
-                    </div>
-                </div>
-
-                <div class="input-group">
-                    <label>Phone Number</label>
-                    <div class="input-wrapper">
-                        <i class="fas fa-phone"></i>
-                        <input type="tel" placeholder="Enter your phone number" required>
-                    </div>
-                </div>
-
-                <div class="input-group">
-                    <label>Password</label>
-                    <div class="input-wrapper">
-                        <i class="fas fa-lock"></i>
-                        <input type="password" id="signupPassword" placeholder="Create a password" required>
-                        <i class="fas fa-eye toggle-password" onclick="togglePassword('signupPassword', this)"></i>
-                    </div>
-                </div>
-
-                <div class="input-group">
-                    <label>Confirm Password</label>
-                    <div class="input-wrapper">
-                        <i class="fas fa-lock"></i>
-                        <input type="password" id="confirmPassword" placeholder="Confirm your password" required>
-                        <i class="fas fa-eye toggle-password" onclick="togglePassword('confirmPassword', this)"></i>
-                    </div>
-                    <div class="error-msg" id="passwordError">Passwords do not match!</div>
-                </div>
-
-                <button type="submit" class="btn-submit">
-                    Create Account <i class="fas fa-user-plus"></i>
-                </button>
-
-                <div class="form-footer">
-                    Already have an account? <a onclick="switchTab('login')">Login here</a>
-                </div>
-            </form>
 
         </div>
     </div>
 
-    <!-- JAVASCRIPT FOR INTERACTIVITY -->
+    <!-- FIREBASE SDK (compat build, matches firebase-config.js) -->
+    <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-database-compat.js"></script>
+    <script src="../firebase-config.js"></script>
+    <script src="../session.js"></script>
+
+    <!-- JAVASCRIPT FOR INTERACTIVITY + REAL FIREBASE AUTH -->
     <script>
         // --- 1. TAB SWITCHING ---
         function switchTab(tab) {
@@ -534,6 +671,12 @@
             const nameLabel = document.getElementById('nameLabel');
             const nameInput = document.getElementById('nameInput');
             const nameIcon = document.getElementById('nameIcon');
+            const ownerNameGroup = document.getElementById('ownerNameGroup');
+            const ownerNameInput = document.getElementById('ownerNameInput');
+            const vatGroup = document.getElementById('vatGroup');
+            const confirmPasswordGroup = document.getElementById('confirmPasswordGroup');
+            const confirmPasswordInput = document.getElementById('confirmPassword');
+            const passwordError = document.getElementById('passwordError');
 
             accountTypeInput.value = type;
 
@@ -543,12 +686,32 @@
                 nameLabel.innerText = 'Full Name';
                 nameInput.placeholder = 'Enter your full name';
                 nameIcon.className = 'fas fa-user';
+
+                // Hide + stop requiring seller-only fields
+                ownerNameGroup.style.display = 'none';
+                vatGroup.style.display = 'none';
+                ownerNameInput.required = false;
+
+                // Customers confirm their password
+                confirmPasswordGroup.style.display = 'block';
+                confirmPasswordInput.required = true;
             } else {
                 sellerOption.classList.add('active');
                 customerOption.classList.remove('active');
                 nameLabel.innerText = 'Shop Name';
                 nameInput.placeholder = 'Enter your shop name';
                 nameIcon.className = 'fas fa-store';
+
+                // Show seller-only fields (Shop Owner Name required, VAT No. optional)
+                ownerNameGroup.style.display = 'block';
+                vatGroup.style.display = 'block';
+                ownerNameInput.required = true;
+
+                // Sellers skip confirm-password (single password field only)
+                confirmPasswordGroup.style.display = 'none';
+                confirmPasswordInput.required = false;
+                confirmPasswordInput.value = '';
+                passwordError.style.display = 'none';
             }
         }
 
@@ -572,6 +735,14 @@
         const passwordError = document.getElementById('passwordError');
 
         function validatePassword() {
+            const accountType = document.getElementById('accountType').value;
+
+            // Sellers only have one password field — nothing to compare against.
+            if (accountType === 'seller') {
+                passwordError.style.display = 'none';
+                return true;
+            }
+
             if (signupPassword.value !== confirmPassword.value) {
                 passwordError.style.display = 'block';
                 confirmPassword.style.borderColor = 'var(--error-red)';
@@ -586,29 +757,187 @@
         signupPassword.addEventListener('input', validatePassword);
         confirmPassword.addEventListener('input', validatePassword);
 
-        // --- 5. FORM SUBMISSION HANDLERS (Demo Only) ---
-        function handleLogin(event) {
-            event.preventDefault();
-            // Demo alert - Replace with actual backend logic
-            alert('Login Successful! (Demo)\nRedirecting to home page...');
-            window.location.href = '../index.html';
+        // --- 5. MESSAGE HELPERS ---
+        function showMsg(id, text, type) {
+            const el = document.getElementById(id);
+            el.textContent = text;
+            el.className = 'form-msg ' + type;
         }
 
+        function clearMsg(id) {
+            const el = document.getElementById(id);
+            el.textContent = '';
+            el.className = 'form-msg';
+        }
+
+        function friendlyAuthError(err) {
+            const code = err && err.code;
+            switch (code) {
+                case 'auth/email-already-in-use': return 'An account with this email already exists. Try logging in instead.';
+                case 'auth/invalid-email': return 'Please enter a valid email address.';
+                case 'auth/weak-password': return 'Password should be at least 6 characters.';
+                case 'auth/user-not-found':
+                case 'auth/wrong-password':
+                case 'auth/invalid-credential': return 'Incorrect email or password.';
+                case 'auth/too-many-requests': return 'Too many attempts. Please wait a moment and try again.';
+                default: return (err && err.message) || 'Something went wrong. Please try again.';
+            }
+        }
+
+        // --- 6. REAL FIREBASE AUTH: LOGIN ---
+        function handleLogin(event) {
+            event.preventDefault();
+            clearMsg('loginMsg');
+
+            if (!window.LGChem) {
+                showMsg('loginMsg', 'Could not connect to the authentication service.', 'error');
+                return;
+            }
+
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            const btn = document.getElementById('loginSubmitBtn');
+
+            btn.disabled = true;
+            btn.innerHTML = 'Logging in… <i class="fas fa-spinner fa-spin"></i>';
+
+            window.LGChem.auth.signInWithEmailAndPassword(email, password)
+                .then(() => {
+                    showMsg('loginMsg', 'Login successful! Redirecting…', 'success');
+                    setTimeout(() => {
+                        window.location.href = '../index.html';
+                    }, 700);
+                })
+                .catch(err => {
+                    showMsg('loginMsg', friendlyAuthError(err), 'error');
+                    btn.disabled = false;
+                    btn.innerHTML = 'Login <i class="fas fa-arrow-right"></i>';
+                });
+        }
+
+        // --- 7. REAL FIREBASE AUTH: SIGNUP ---
         function handleSignup(event) {
             event.preventDefault();
-            
+            clearMsg('signupMsg');
+
             if (!validatePassword()) {
-                alert('Please fix the errors before submitting.');
+                showMsg('signupMsg', 'Please fix the errors before submitting.', 'error');
+                return;
+            }
+
+            if (!window.LGChem) {
+                showMsg('signupMsg', 'Could not connect to the authentication service.', 'error');
                 return;
             }
 
             const accountType = document.getElementById('accountType').value;
-            const name = document.getElementById('nameInput').value;
+            const name = document.getElementById('nameInput').value.trim();
+            const email = document.getElementById('signupEmail').value.trim();
+            const address = document.getElementById('addressInput').value.trim();
+            const phone = document.getElementById('phoneInput').value.trim();
+            const password = document.getElementById('signupPassword').value;
+            const btn = document.getElementById('signupSubmitBtn');
 
-            // Demo alert - Replace with actual backend logic
-            alert(`Account Created Successfully! (Demo)\n\nType: ${accountType.toUpperCase()}\nName: ${name}\n\nRedirecting to login...`);
-            switchTab('login');
+            // Seller-only fields
+            const ownerName = document.getElementById('ownerNameInput').value.trim();
+            const vatNo = document.getElementById('vatInput').value.trim();
+
+            if (accountType === 'seller' && !ownerName) {
+                showMsg('signupMsg', 'Please enter the shop owner\'s name.', 'error');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = 'Creating account… <i class="fas fa-spinner fa-spin"></i>';
+
+            window.LGChem.auth.createUserWithEmailAndPassword(email, password)
+                .then(cred => {
+                    const uid = cred.user.uid;
+
+                    // NOTE: the password is used ONLY above, to create the Firebase Auth
+                    // user. It is intentionally never included in this object, so it is
+                    // never written to Realtime Database. Firebase Auth stores/hashes the
+                    // password itself; RTDB only ever gets the account's profile details.
+                    const profile = {
+                        accountType: accountType,
+                        name: name,
+                        email: email,
+                        address: address,
+                        phone: phone,
+                        createdAt: new Date().toISOString()
+                    };
+
+                    // Only attach seller fields for seller accounts
+                    if (accountType === 'seller') {
+                        profile.ownerName = ownerName;
+                        profile.vatNo = vatNo || null;
+                    }
+
+                    // Also set the display name on the Firebase Auth user record
+                    return cred.user.updateProfile({ displayName: name })
+                        .then(() => window.LGChem.saveUserProfile(uid, profile));
+                })
+                .then(() => {
+                    showMsg('signupMsg', 'Account created successfully! Redirecting…', 'success');
+                    setTimeout(() => {
+                        window.location.href = '../index.html';
+                    }, 900);
+                })
+                .catch(err => {
+                    showMsg('signupMsg', friendlyAuthError(err), 'error');
+                    btn.disabled = false;
+                    btn.innerHTML = 'Create Account <i class="fas fa-user-plus"></i>';
+                });
         }
+
+        // --- 8. FORGOT PASSWORD ---
+        function handleForgotPassword() {
+            const email = document.getElementById('loginEmail').value.trim();
+            if (!email) {
+                showMsg('loginMsg', 'Enter your email above first, then click "Forgot Password?" again.', 'error');
+                return;
+            }
+            if (!window.LGChem) return;
+
+            window.LGChem.auth.sendPasswordResetEmail(email)
+                .then(() => showMsg('loginMsg', 'Password reset email sent. Check your inbox.', 'success'))
+                .catch(err => showMsg('loginMsg', friendlyAuthError(err), 'error'));
+        }
+
+        // --- 9. IF ALREADY LOGGED IN, SHOW ACCOUNT PANEL INSTEAD OF FORMS ---
+        function initials(name) {
+            if (!name) return '?';
+            return name.trim().charAt(0).toUpperCase();
+        }
+
+        function wireExistingSession() {
+            if (!window.LGSession) return;
+
+            window.LGSession.onChange(function (session) {
+                const loggedInPanel = document.getElementById('loggedInPanel');
+                const authFormsWrapper = document.getElementById('authFormsWrapper');
+
+                if (session) {
+                    document.getElementById('loggedInAvatar').textContent = initials(session.name);
+                    document.getElementById('loggedInName').textContent = 'Welcome back, ' + session.name + '!';
+                    document.getElementById('loggedInEmail').textContent = session.email;
+                    loggedInPanel.style.display = 'block';
+                    authFormsWrapper.style.display = 'none';
+                } else {
+                    loggedInPanel.style.display = 'none';
+                    authFormsWrapper.style.display = 'block';
+                }
+            });
+
+            document.getElementById('loggedInLogoutBtn').addEventListener('click', () => {
+                window.LGChem.signOut().then(() => {
+                    window.LGSession.clear();
+                    window.location.reload();
+                });
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', wireExistingSession);
     </script>
 
 </body>
