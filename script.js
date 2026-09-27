@@ -5,22 +5,6 @@ function initials(name) {
     return name.trim().charAt(0).toUpperCase();
 }
 
-function refreshCartBadge(uid) {
-    const badge = document.getElementById('cartBadge');
-    if (!badge) return;
-    if (!uid || !window.LGChem) {
-        badge.textContent = '0';
-        return;
-    }
-    window.LGChem.rtdb.ref('carts/' + uid).once('value')
-        .then(function (snap) {
-            const val = snap.val();
-            const count = val ? Object.values(val).reduce(function (sum, item) { return sum + (item.qty || 1); }, 0) : 0;
-            badge.textContent = count;
-        })
-        .catch(function (err) { console.error('Failed to load cart count:', err); });
-}
-
 function wireUserMenu() {
     const profileLink = document.getElementById('profileLink');
     const userMenu = document.getElementById('userMenu');
@@ -64,12 +48,10 @@ function wireUserMenu() {
             if (userAvatar) userAvatar.textContent = initials(session.name);
             if (userNameLabel) userNameLabel.textContent = session.name;
             if (userTypeBadge) userTypeBadge.textContent = (session.accountType || 'customer').toUpperCase();
-            refreshCartBadge(session.uid);
         } else {
             profileLink.style.display = 'inline-flex';
             userMenu.style.display = 'none';
             userDropdown.classList.remove('open');
-            refreshCartBadge(null);
         }
     }
 
@@ -109,14 +91,14 @@ function renderProducts(products) {
                         <div class="product-unit">${product.unit || ''}</div>
                     </div>
                     <button class="add-to-cart-btn" data-key="${product.key || ''}">
-                        <i class="fas fa-cart-plus"></i> Add
+                        <i class="fas fa-cart-plus"></i> <span class="add-to-cart-label">Add</span>
                     </button>
                 </div>
             </div>
         `;
 
         const addBtn = card.querySelector('.add-to-cart-btn');
-        addBtn.addEventListener('click', function () { addToCart(product); });
+        addBtn.addEventListener('click', function () { addToCart(product, addBtn); });
 
         gridContainer.appendChild(card);
     });
@@ -147,7 +129,7 @@ function loadProductsFromFirebase() {
         });
 }
 
-function addToCart(product) {
+function addToCart(product, btn) {
     const uid = window.LGSession && window.LGSession.getUserId();
 
     if (!uid) {
@@ -161,20 +143,29 @@ function addToCart(product) {
         return;
     }
 
-    const cartItemRef = window.LGChem.rtdb.ref('carts/' + uid + '/' + product.key);
-    cartItemRef.once('value').then(function (snap) {
-        const existing = snap.val();
-        const newQty = (existing && existing.qty ? existing.qty : 0) + 1;
-        return cartItemRef.set({
-            productKey: product.key,
-            name: product.name || 'Unnamed product',
-            category: product.category || '',
-            price: product.price || '',
-            unit: product.unit || '',
-            image: product.image || '',
-            qty: newQty
+    if (!window.LGCart) {
+        console.error('cart-helper.js did not load.');
+        return;
+    }
+
+    if (btn) btn.disabled = true;
+    const labelEl = btn ? btn.querySelector('.add-to-cart-label') : null;
+    const originalLabel = labelEl ? labelEl.textContent : null;
+    if (labelEl) labelEl.textContent = 'Adding…';
+
+    window.LGCart.addToCart(uid, product)
+        .then(function (newQty) {
+            if (labelEl) labelEl.textContent = 'Added ✓';
+            setTimeout(function () {
+                if (labelEl) labelEl.textContent = originalLabel || 'Add';
+                if (btn) btn.disabled = false;
+            }, 900);
+        })
+        .catch(function (err) {
+            console.error('Failed to add to cart:', err);
+            if (labelEl) labelEl.textContent = originalLabel || 'Add';
+            if (btn) btn.disabled = false;
         });
-    }).catch(function (err) { console.error('Failed to add to cart:', err); });
 }
 
 document.addEventListener('DOMContentLoaded', function () {

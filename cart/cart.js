@@ -5,22 +5,6 @@ function initials(name) {
     return name.trim().charAt(0).toUpperCase();
 }
 
-function refreshCartBadge(uid) {
-    const badge = document.getElementById('cartBadge');
-    if (!badge) return;
-    if (!uid || !window.LGChem) {
-        badge.textContent = '0';
-        return;
-    }
-    window.LGChem.rtdb.ref('carts/' + uid).once('value')
-        .then(function (snap) {
-            const val = snap.val();
-            const count = val ? Object.values(val).reduce(function (sum, item) { return sum + (item.qty || 1); }, 0) : 0;
-            badge.textContent = count;
-        })
-        .catch(function (err) { console.error('Failed to load cart count:', err); });
-}
-
 function wireUserMenu() {
     const profileLink = document.getElementById('profileLink');
     const userMenu = document.getElementById('userMenu');
@@ -64,12 +48,10 @@ function wireUserMenu() {
             if (userAvatar) userAvatar.textContent = initials(session.name);
             if (userNameLabel) userNameLabel.textContent = session.name;
             if (userTypeBadge) userTypeBadge.textContent = (session.accountType || 'customer').toUpperCase();
-            refreshCartBadge(session.uid);
         } else {
             profileLink.style.display = 'inline-flex';
             userMenu.style.display = 'none';
             userDropdown.classList.remove('open');
-            refreshCartBadge(null);
         }
     }
 
@@ -153,7 +135,7 @@ function renderCart(items) {
                     <div class="cart-item-price">${item.price || ''} <span class="cart-item-unit">${item.unit || ''}</span></div>
                     <div class="qty-controls">
                         <button class="qty-btn" data-action="dec" data-key="${item.key}">−</button>
-                        <span class="qty-value">${item.qty || 1}</span>
+                        <span class="qty-value" data-qty-for="${item.key}">${item.qty || 1}</span>
                         <button class="qty-btn" data-action="inc" data-key="${item.key}">+</button>
                     </div>
                 </div>
@@ -195,39 +177,48 @@ function renderCart(items) {
 function wireCartItemControls() {
     document.querySelectorAll('.qty-btn').forEach(function (btn) {
         btn.addEventListener('click', function () {
+            if (btn.disabled) return;
             const key = btn.getAttribute('data-key');
             const action = btn.getAttribute('data-action');
-            changeCartQty(key, action === 'inc' ? 1 : -1);
+            const qtyEl = document.querySelector('.qty-value[data-qty-for="' + key + '"]');
+
+            btn.disabled = true;
+            const otherBtn = btn.parentElement.querySelector(
+                '.qty-btn[data-action="' + (action === 'inc' ? 'dec' : 'inc') + '"]'
+            );
+            if (otherBtn) otherBtn.disabled = true;
+
+            changeCartQty(key, action === 'inc' ? 1 : -1)
+                .then(function (newQty) {
+                    if (qtyEl && newQty && newQty > 0) qtyEl.textContent = newQty;
+                })
+                .finally(function () {
+                    btn.disabled = false;
+                    if (otherBtn) otherBtn.disabled = false;
+                });
         });
     });
 
     document.querySelectorAll('.remove-btn').forEach(function (btn) {
         btn.addEventListener('click', function () {
+            if (btn.disabled) return;
+            btn.disabled = true;
             const key = btn.getAttribute('data-key');
-            removeCartItem(key);
+            removeCartItem(key).catch(function () { btn.disabled = false; });
         });
     });
 }
 
-function cartItemRef(key) {
-    return window.LGChem.rtdb.ref('carts/' + currentCartUid + '/' + key);
-}
-
 function changeCartQty(key, delta) {
-    const ref = cartItemRef(key);
-    ref.once('value').then(function (snap) {
-        const item = snap.val();
-        if (!item) return;
-        const newQty = (item.qty || 1) + delta;
-        if (newQty <= 0) {
-            return ref.remove();
-        }
-        return ref.update({ qty: newQty });
-    }).catch(function (err) { console.error('Failed to update quantity:', err); });
+    if (!window.LGCart || !currentCartUid) return Promise.resolve(null);
+    return window.LGCart.changeQty(currentCartUid, key, delta)
+        .catch(function (err) { console.error('Failed to update quantity:', err); return null; });
 }
 
 function removeCartItem(key) {
-    cartItemRef(key).remove().catch(function (err) { console.error('Failed to remove item:', err); });
+    if (!window.LGCart || !currentCartUid) return Promise.resolve();
+    return window.LGCart.removeItem(currentCartUid, key)
+        .catch(function (err) { console.error('Failed to remove item:', err); });
 }
 
 function loadCart(uid) {
@@ -245,18 +236,10 @@ function loadCart(uid) {
             ? Object.keys(val).map(function (key) { return Object.assign({ key: key }, val[key]); })
             : [];
         renderCart(items);
-        updateCartBadge(items);
     }, function (err) {
         console.error('Failed to load cart:', err);
         renderCartErrorState();
     });
-}
-
-function updateCartBadge(items) {
-    const badge = document.getElementById('cartBadge');
-    if (!badge) return;
-    const count = items.reduce(function (sum, item) { return sum + (item.qty || 1); }, 0);
-    badge.textContent = count;
 }
 
 function wireCartPage() {
@@ -276,8 +259,6 @@ function wireCartPage() {
                 window.LGChem.rtdb.ref('carts/' + currentCartUid).off();
             }
             currentCartUid = null;
-            const badge = document.getElementById('cartBadge');
-            if (badge) badge.textContent = '0';
             renderCartLoggedOutState();
         }
     });

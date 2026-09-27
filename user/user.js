@@ -13,22 +13,6 @@ function escapeHtml(str) {
         .replace(/>/g, '&gt;');
 }
 
-function refreshCartBadge(uid) {
-    const badge = document.getElementById('cartBadge');
-    if (!badge) return;
-    if (!uid || !window.LGChem) {
-        badge.textContent = '0';
-        return;
-    }
-    window.LGChem.rtdb.ref('carts/' + uid).once('value')
-        .then(function (snap) {
-            const val = snap.val();
-            const count = val ? Object.values(val).reduce(function (sum, item) { return sum + (item.qty || 1); }, 0) : 0;
-            badge.textContent = count;
-        })
-        .catch(function (err) { console.error('Failed to load cart count:', err); });
-}
-
 function wireUserMenu() {
     const profileLink = document.getElementById('profileLink');
     const userMenu = document.getElementById('userMenu');
@@ -72,12 +56,10 @@ function wireUserMenu() {
             if (userAvatar) userAvatar.textContent = initials(session.name);
             if (userNameLabel) userNameLabel.textContent = session.name;
             if (userTypeBadge) userTypeBadge.textContent = (session.accountType || 'customer').toUpperCase();
-            refreshCartBadge(session.uid);
         } else {
             profileLink.style.display = 'inline-flex';
             userMenu.style.display = 'none';
             userDropdown.classList.remove('open');
-            refreshCartBadge(null);
         }
     }
 
