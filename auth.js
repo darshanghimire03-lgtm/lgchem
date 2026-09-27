@@ -333,7 +333,7 @@ function handleLogin(event) {
         .then(function () {
             showMsg('loginMsg', 'Login successful! Redirecting…', 'success');
             setTimeout(function () {
-                window.location.href = '../index.html';
+                window.location.href = '../user/index.html';
             }, 700);
         })
         .catch(function (err) {
@@ -415,7 +415,7 @@ function handleSignup(event) {
 
             showMsg('signupMsg', 'Account created successfully! Redirecting…', 'success');
             setTimeout(function () {
-                window.location.href = '../index.html';
+                window.location.href = '../user/index.html';
             }, 900);
         })
         .catch(function (err) {
@@ -453,17 +453,13 @@ function wireUserMenu() {
     const userTypeBadge = document.getElementById('userTypeBadge');
     const logoutBtn = document.getElementById('logoutBtn');
 
-    userChip.addEventListener('click', function () {
-        userDropdown.classList.toggle('open');
+    userChip.addEventListener('click', function (e) {
+        e.preventDefault();
+        window.location.href = '../user/index.html';
     });
 
-    document.addEventListener('click', function (e) {
-        if (!userMenu.contains(e.target)) {
-            userDropdown.classList.remove('open');
-        }
-    });
-
-    logoutBtn.addEventListener('click', function () {
+    logoutBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
         window.LGChem.signOut().then(function () {
             window.LGSession.clear();
             window.location.reload();

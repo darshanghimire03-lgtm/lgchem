@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - LG CHEM</title>
+
+    <link rel="icon" type="image/png" href="../favicon.png">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../common.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body data-base="../">
+
+    <nav class="navbar">
+        <a href="../index.html" class="brand-container">
+            <img src="../favicon.png" alt="LG CHEM Logo" class="brand-logo">
+            <div class="brand-name">LG <span>CHEM</span></div>
+        </a>
+        <div class="nav-icons">
+            <a href="../auth/index.html" class="icon-btn" id="profileLink" aria-label="Profile">
+                <i class="fas fa-user-circle"></i>
+            </a>
+
+            <div class="user-menu" id="userMenu">
+                <div class="user-chip" id="userChip">
+                    <div class="user-avatar" id="userAvatar">?</div>
+                    <span class="user-name" id="userNameLabel">Account</span>
+                    <i class="fas fa-chevron-down" style="font-size:0.7rem;"></i>
+                </div>
+                <div class="user-dropdown" id="userDropdown">
+                    <span class="account-type-badge" id="userTypeBadge">Customer</span>
+                    <a href="../user/index.html"><i class="fas fa-id-card"></i> My Account</a>
+                    <a href="#"><i class="fas fa-box"></i> My Orders</a>
+                    <button class="logout-item" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                </div>
+            </div>
+
+            <a href="../cart/index.html" class="icon-btn" aria-label="Cart">
+                <i class="fas fa-shopping-cart"></i>
+                <span class="cart-badge" id="cartBadge">0</span>
+            </a>
+        </div>
+    </nav>
+
+    <section class="about-section">
+        <div class="about-hero">
+            <h1>About <span>LG CHEM</span></h1>
+            <p>Trusted chemical products, delivered with care from Tikapur to your doorstep.</p>
+        </div>
+
+        <div class="about-card">
+            <h3><i class="fas fa-flask"></i> Who We Are</h3>
+            <p>LG CHEM is a growing supplier of chemical products serving customers and shop owners across the region. We connect trusted sellers with everyday customers and businesses, making it simple to find and order the products you need.</p>
+        </div>
+
+        <div class="about-card">
+            <h3><i class="fas fa-bullseye"></i> Our Mission</h3>
+            <p>We aim to make buying and selling chemical products safer, faster, and more transparent — with clear pricing, verified sellers, and dependable delivery.</p>
+        </div>
+
+        <div class="about-grid">
+            <div class="about-stat">
+                <i class="fas fa-users"></i>
+                <div class="about-stat-value">Growing</div>
+                <div class="about-stat-label">Customer Base</div>
+            </div>
+            <div class="about-stat">
+                <i class="fas fa-store"></i>
+                <div class="about-stat-value">Verified</div>
+                <div class="about-stat-label">Sellers</div>
+            </div>
+            <div class="about-stat">
+                <i class="fas fa-truck"></i>
+                <div class="about-stat-value">Reliable</div>
+                <div class="about-stat-label">Delivery</div>
+            </div>
+        </div>
+
+        <div class="about-card">
+            <h3><i class="fas fa-location-dot"></i> Where We're Based</h3>
+            <p>Tikapur 3, Kailali, Nepal</p>
+        </div>
+
+        <div class="about-card">
+            <h3><i class="fas fa-envelope"></i> Get in Touch</h3>
+            <p>Have a question or want to partner with us? <a href="../user/index.html">Reach out through your account's Help &amp; Support section</a> and our team will respond as soon as possible.</p>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <p>&copy; 2026 <span>LG CHEM</span>. All rights reserved.</p>
+        <p style="font-size: 0.8rem; margin-top: 5px; opacity: 0.7;">Tikapur 3, Kailali, Nepal</p>
+    </footer>
+
+    <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-database-compat.js"></script>
+    <script src="../firebase-config.js"></script>
+    <script src="../auth.js"></script>
+
+</body>
+</html>

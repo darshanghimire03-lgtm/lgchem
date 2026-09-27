@@ -33,8 +33,9 @@ function wireUserMenu() {
 
     if (!profileLink || !userMenu || !userChip || !userDropdown) return;
 
-    userChip.addEventListener('click', function () {
-        userDropdown.classList.toggle('open');
+    userChip.addEventListener('click', function (e) {
+        e.preventDefault();
+        window.location.href = BASE + 'user/index.html';
     });
 
     profileLink.addEventListener('click', function (e) {
@@ -44,14 +45,9 @@ function wireUserMenu() {
         }
     });
 
-    document.addEventListener('click', function (e) {
-        if (!userMenu.contains(e.target)) {
-            userDropdown.classList.remove('open');
-        }
-    });
-
     if (logoutBtn) {
-        logoutBtn.addEventListener('click', function () {
+        logoutBtn.addEventListener('click', function (e) {
+            e.stopPropagation();
             window.LGChem.signOut().then(function () {
                 window.LGSession.clear();
                 window.location.href = BASE + 'index.html';

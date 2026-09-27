@@ -75,7 +75,102 @@
                 </div>
             </div>
         </div>
+
+        <div class="settings-card" id="settingsCard" style="display:none;">
+            <h3><i class="fas fa-gear"></i> Settings</h3>
+            <div class="settings-list">
+                <button class="settings-item" id="changePasswordBtn" type="button">
+                    <span class="settings-item-left"><i class="fas fa-key"></i> Change Password</span>
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+                <a class="settings-item" href="../about/index.html" id="aboutUsBtn">
+                    <span class="settings-item-left"><i class="fas fa-circle-info"></i> About Us</span>
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+                <button class="settings-item" id="helpSupportBtn" type="button">
+                    <span class="settings-item-left"><i class="fas fa-circle-question"></i> Help &amp; Support</span>
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+                <button class="settings-item settings-item-danger" id="deleteAccountBtn" type="button">
+                    <span class="settings-item-left"><i class="fas fa-trash"></i> Delete Account</span>
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+                <button class="settings-item settings-item-danger" id="settingsLogoutBtn" type="button">
+                    <span class="settings-item-left"><i class="fas fa-sign-out-alt"></i> Logout</span>
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
     </section>
+
+    <div class="modal-overlay" id="changePasswordModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3><i class="fas fa-key"></i> Change Password</h3>
+                <button class="modal-close" id="closeChangePasswordModal" aria-label="Close"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-msg hidden" id="changePasswordMsg"></div>
+            <form id="changePasswordForm">
+                <div class="form-group">
+                    <label for="currentPasswordInput">Current password</label>
+                    <input type="password" id="currentPasswordInput" required autocomplete="current-password">
+                </div>
+                <div class="form-group">
+                    <label for="newPasswordInput">New password</label>
+                    <input type="password" id="newPasswordInput" required minlength="6" autocomplete="new-password">
+                </div>
+                <div class="form-group">
+                    <label for="confirmNewPasswordInput">Confirm new password</label>
+                    <input type="password" id="confirmNewPasswordInput" required minlength="6" autocomplete="new-password">
+                </div>
+                <button type="submit" class="modal-submit-btn" id="changePasswordSubmitBtn">
+                    <span id="changePasswordSubmitText">Update Password</span> <i class="fas fa-arrow-right"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="deleteAccountModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3><i class="fas fa-triangle-exclamation"></i> Delete Account</h3>
+                <button class="modal-close" id="closeDeleteAccountModal" aria-label="Close"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-msg hidden" id="deleteAccountMsg"></div>
+            <p class="modal-warning">This will permanently delete your account and cannot be undone. Please enter your password to confirm.</p>
+            <form id="deleteAccountForm">
+                <div class="form-group">
+                    <label for="deletePasswordInput">Password</label>
+                    <input type="password" id="deletePasswordInput" required autocomplete="current-password">
+                </div>
+                <button type="submit" class="modal-submit-btn modal-submit-danger" id="deleteAccountSubmitBtn">
+                    <span id="deleteAccountSubmitText">Delete My Account</span> <i class="fas fa-trash"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="helpSupportModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3><i class="fas fa-circle-question"></i> Help &amp; Support</h3>
+                <button class="modal-close" id="closeHelpSupportModal" aria-label="Close"><i class="fas fa-times"></i></button>
+            </div>
+            <p class="modal-text">Need help with your order or account? Reach out to us and we'll get back to you as soon as possible.</p>
+            <div class="support-contact-row">
+                <i class="fas fa-envelope"></i>
+                <span>support@lgchem.com.np</span>
+            </div>
+            <div class="support-contact-row">
+                <i class="fas fa-phone"></i>
+                <span>+977 98XXXXXXXX</span>
+            </div>
+            <div class="support-contact-row">
+                <i class="fas fa-location-dot"></i>
+                <span>Tikapur 3, Kailali, Nepal</span>
+            </div>
+        </div>
+    </div>
 
     <footer class="footer">
         <p>&copy; 2026 <span>LG CHEM</span>. All rights reserved.</p>

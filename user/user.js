@@ -41,8 +41,9 @@ function wireUserMenu() {
 
     if (!profileLink || !userMenu || !userChip || !userDropdown) return;
 
-    userChip.addEventListener('click', function () {
-        userDropdown.classList.toggle('open');
+    userChip.addEventListener('click', function (e) {
+        e.preventDefault();
+        window.location.href = BASE + 'user/index.html';
     });
 
     profileLink.addEventListener('click', function (e) {
@@ -52,14 +53,9 @@ function wireUserMenu() {
         }
     });
 
-    document.addEventListener('click', function (e) {
-        if (!userMenu.contains(e.target)) {
-            userDropdown.classList.remove('open');
-        }
-    });
-
     if (logoutBtn) {
-        logoutBtn.addEventListener('click', function () {
+        logoutBtn.addEventListener('click', function (e) {
+            e.stopPropagation();
             window.LGChem.signOut().then(function () {
                 window.LGSession.clear();
                 window.location.href = BASE + 'index.html';
@@ -124,6 +120,7 @@ function renderSkeletonState() {
             </div>
         </div>
     `;
+    hideSettingsCard();
 }
 
 function renderLoggedOutState() {
@@ -137,6 +134,7 @@ function renderLoggedOutState() {
             <a href="${BASE}auth/index.html" class="shop-link"><i class="fas fa-right-to-bracket"></i> Log In / Sign Up</a>
         </div>
     `;
+    hideSettingsCard();
 }
 
 function runDiagnostics() {
@@ -172,6 +170,7 @@ function renderErrorState(err, diagnostics) {
             <a href="#" class="shop-link" onclick="location.reload(); return false;"><i class="fas fa-rotate-right"></i> Retry</a>
         </div>
     `;
+    hideSettingsCard();
 }
 
 function renderAccount(uid, email, displayNameFromAuth, profile) {
@@ -223,6 +222,18 @@ function renderAccount(uid, email, displayNameFromAuth, profile) {
             ${detailsHtml}
         </div>
     `;
+
+    showSettingsCard();
+}
+
+function showSettingsCard() {
+    const settingsCard = document.getElementById('settingsCard');
+    if (settingsCard) settingsCard.style.display = 'block';
+}
+
+function hideSettingsCard() {
+    const settingsCard = document.getElementById('settingsCard');
+    if (settingsCard) settingsCard.style.display = 'none';
 }
 
 let loadToken = 0;
@@ -281,7 +292,210 @@ function wireUserPage() {
     });
 }
 
+/* ---------------- Settings: modal helpers ---------------- */
+
+function openModal(id) {
+    const el = document.getElementById(id);
+    if (el) el.classList.add('open');
+}
+
+function closeModal(id) {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('open');
+}
+
+function showModalMsg(id, text, type) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = text;
+    el.className = 'modal-msg ' + type;
+}
+
+function clearModalMsg(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = '';
+    el.className = 'modal-msg hidden';
+}
+
+/* ---------------- Settings: Change Password ---------------- */
+
+function wireChangePassword() {
+    const changePasswordBtn = document.getElementById('changePasswordBtn');
+    const modal = document.getElementById('changePasswordModal');
+    const closeBtn = document.getElementById('closeChangePasswordModal');
+    const form = document.getElementById('changePasswordForm');
+    const submitBtn = document.getElementById('changePasswordSubmitBtn');
+    const submitText = document.getElementById('changePasswordSubmitText');
+
+    if (!changePasswordBtn || !modal || !form) return;
+
+    changePasswordBtn.addEventListener('click', function () {
+        form.reset();
+        clearModalMsg('changePasswordMsg');
+        openModal('changePasswordModal');
+    });
+
+    closeBtn.addEventListener('click', function () { closeModal('changePasswordModal'); });
+    modal.addEventListener('click', function (e) {
+        if (e.target === modal) closeModal('changePasswordModal');
+    });
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        clearModalMsg('changePasswordMsg');
+
+        const currentPassword = document.getElementById('currentPasswordInput').value;
+        const newPassword = document.getElementById('newPasswordInput').value;
+        const confirmNewPassword = document.getElementById('confirmNewPasswordInput').value;
+
+        if (newPassword.length < 6) {
+            showModalMsg('changePasswordMsg', 'New password must be at least 6 characters.', 'error');
+            return;
+        }
+        if (newPassword !== confirmNewPassword) {
+            showModalMsg('changePasswordMsg', 'New passwords do not match.', 'error');
+            return;
+        }
+
+        const user = window.LGChem && window.LGChem.auth && window.LGChem.auth.currentUser;
+        if (!user || !user.email) {
+            showModalMsg('changePasswordMsg', 'Could not verify your session. Please log in again.', 'error');
+            return;
+        }
+
+        submitBtn.disabled = true;
+        submitText.textContent = 'Updating…';
+
+        const credential = firebase.auth.EmailAuthProvider.credential(user.email, currentPassword);
+
+        user.reauthenticateWithCredential(credential)
+            .then(function () {
+                return user.updatePassword(newPassword);
+            })
+            .then(function () {
+                showModalMsg('changePasswordMsg', 'Password updated successfully.', 'success');
+                submitBtn.disabled = false;
+                submitText.textContent = 'Update Password';
+                setTimeout(function () { closeModal('changePasswordModal'); }, 1200);
+            })
+            .catch(function (err) {
+                submitBtn.disabled = false;
+                submitText.textContent = 'Update Password';
+                showModalMsg('changePasswordMsg', friendlyFirebaseError(err), 'error');
+            });
+    });
+}
+
+/* ---------------- Settings: Delete Account ---------------- */
+
+function wireDeleteAccount() {
+    const deleteAccountBtn = document.getElementById('deleteAccountBtn');
+    const modal = document.getElementById('deleteAccountModal');
+    const closeBtn = document.getElementById('closeDeleteAccountModal');
+    const form = document.getElementById('deleteAccountForm');
+    const submitBtn = document.getElementById('deleteAccountSubmitBtn');
+    const submitText = document.getElementById('deleteAccountSubmitText');
+
+    if (!deleteAccountBtn || !modal || !form) return;
+
+    deleteAccountBtn.addEventListener('click', function () {
+        form.reset();
+        clearModalMsg('deleteAccountMsg');
+        openModal('deleteAccountModal');
+    });
+
+    closeBtn.addEventListener('click', function () { closeModal('deleteAccountModal'); });
+    modal.addEventListener('click', function (e) {
+        if (e.target === modal) closeModal('deleteAccountModal');
+    });
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        clearModalMsg('deleteAccountMsg');
+
+        const password = document.getElementById('deletePasswordInput').value;
+        const user = window.LGChem && window.LGChem.auth && window.LGChem.auth.currentUser;
+
+        if (!user || !user.email) {
+            showModalMsg('deleteAccountMsg', 'Could not verify your session. Please log in again.', 'error');
+            return;
+        }
+
+        submitBtn.disabled = true;
+        submitText.textContent = 'Deleting…';
+
+        const credential = firebase.auth.EmailAuthProvider.credential(user.email, password);
+        const uid = user.uid;
+
+        user.reauthenticateWithCredential(credential)
+            .then(function () {
+                return window.LGChem.rtdb.ref('users/' + uid).remove();
+            })
+            .then(function () {
+                return window.LGChem.rtdb.ref('carts/' + uid).remove();
+            })
+            .then(function () {
+                return user.delete();
+            })
+            .then(function () {
+                window.LGSession.clear();
+                window.location.href = BASE + 'index.html';
+            })
+            .catch(function (err) {
+                submitBtn.disabled = false;
+                submitText.textContent = 'Delete My Account';
+                showModalMsg('deleteAccountMsg', friendlyFirebaseError(err), 'error');
+            });
+    });
+}
+
+/* ---------------- Settings: Help & Support ---------------- */
+
+function wireHelpSupport() {
+    const helpBtn = document.getElementById('helpSupportBtn');
+    const modal = document.getElementById('helpSupportModal');
+    const closeBtn = document.getElementById('closeHelpSupportModal');
+
+    if (!helpBtn || !modal) return;
+
+    helpBtn.addEventListener('click', function () { openModal('helpSupportModal'); });
+    closeBtn.addEventListener('click', function () { closeModal('helpSupportModal'); });
+    modal.addEventListener('click', function (e) {
+        if (e.target === modal) closeModal('helpSupportModal');
+    });
+}
+
+/* ---------------- Settings: Logout ---------------- */
+
+function wireSettingsLogout() {
+    const settingsLogoutBtn = document.getElementById('settingsLogoutBtn');
+    if (!settingsLogoutBtn) return;
+
+    settingsLogoutBtn.addEventListener('click', function () {
+        window.LGChem.signOut().then(function () {
+            window.LGSession.clear();
+            window.location.href = BASE + 'index.html';
+        });
+    });
+}
+
+function friendlyFirebaseError(err) {
+    const code = err && err.code;
+    switch (code) {
+        case 'auth/wrong-password':
+        case 'auth/invalid-credential': return 'Incorrect password. Please try again.';
+        case 'auth/weak-password': return 'Password should be at least 6 characters.';
+        case 'auth/requires-recent-login': return 'Please log out and log back in, then try again.';
+        case 'auth/too-many-requests': return 'Too many attempts. Please wait a moment and try again.';
+        default: return (err && err.message) || 'Something went wrong. Please try again.';
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     wireUserMenu();
     wireUserPage();
+    wireChangePassword();
+    wireDeleteAccount();
+    wireHelpSupport();
 });
