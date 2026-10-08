@@ -1,230 +1,105 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>404 — Page Not Found</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>404 - Page Not Found | LG CHEM</title>
+<style>
+  /* ===== CHANGE THESE 5 COLORS TO MATCH YOUR SITE ===== */
+  :root {
+    --primary: #0b5ed7;      /* header, button, accents */
+    --primary-dark: #084298; /* button hover */
+    --bg: #f4f7fb;          /* page background */
+    --text: #1f2937;        /* main text */
+    --muted: #6b7280;       /* secondary text */
+  }
+  /* ==================================================== */
 
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
 
-    body {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      font-family: Arial, Helvetica, sans-serif;
-      background: #f8f9fc;
-      color: #111827;
-    }
+  body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+  }
 
-    .background {
-      position: fixed;
-      inset: 0;
-      overflow: hidden;
-      z-index: -1;
-    }
+  header {
+    background: var(--primary);
+    color: #fff;
+    padding: 16px 24px;
+  }
+  header a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
 
-    .circle {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(2px);
-      opacity: 0.45;
-      animation: float 8s ease-in-out infinite;
-    }
+  main {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 40px 20px;
+  }
+  .box { max-width: 440px; }
+  h1 {
+    font-size: 96px;
+    font-weight: 800;
+    color: var(--primary);
+    letter-spacing: -2px;
+    line-height: 1;
+  }
+  h2 { font-size: 24px; margin: 12px 0; }
+  p { color: var(--muted); line-height: 1.6; margin-bottom: 28px; }
+  .btn {
+    display: inline-block;
+    padding: 12px 30px;
+    background: var(--primary);
+    color: #fff;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    transition: background 0.2s;
+  }
+  .btn:hover { background: var(--primary-dark); }
 
-    .circle:nth-child(1) {
-      width: 260px;
-      height: 260px;
-      background: #dbeafe;
-      top: -80px;
-      left: -80px;
-    }
-
-    .circle:nth-child(2) {
-      width: 320px;
-      height: 320px;
-      background: #ede9fe;
-      right: -100px;
-      bottom: -100px;
-      animation-delay: -3s;
-    }
-
-    .circle:nth-child(3) {
-      width: 150px;
-      height: 150px;
-      background: #e0f2fe;
-      right: 20%;
-      top: 12%;
-      animation-delay: -5s;
-    }
-
-    .container {
-      width: min(90%, 600px);
-      text-align: center;
-      animation: appear 0.9s ease forwards;
-    }
-
-    .number {
-      font-size: clamp(120px, 28vw, 230px);
-      line-height: 0.85;
-      font-weight: 900;
-      letter-spacing: -12px;
-      color: #111827;
-      animation: floating 4s ease-in-out infinite;
-      text-shadow: 0 15px 35px rgba(17, 24, 39, 0.12);
-    }
-
-    .number span {
-      display: inline-block;
-      animation: bounce 3s ease-in-out infinite;
-    }
-
-    .number span:nth-child(2) {
-      animation-delay: 0.15s;
-    }
-
-    .number span:nth-child(3) {
-      animation-delay: 0.3s;
-    }
-
-    h1 {
-      margin-top: 35px;
-      font-size: clamp(25px, 5vw, 38px);
-      font-weight: 750;
-    }
-
-    p {
-      margin: 14px auto 30px;
-      max-width: 450px;
-      color: #6b7280;
-      font-size: 16px;
-      line-height: 1.6;
-    }
-
-    .home {
-      display: inline-flex;
-      align-items: center;
-      gap: 9px;
-      padding: 13px 22px;
-      border-radius: 12px;
-      background: #111827;
-      color: white;
-      text-decoration: none;
-      font-weight: 600;
-      transition: transform 0.25s ease, box-shadow 0.25s ease;
-      box-shadow: 0 8px 25px rgba(17, 24, 39, 0.18);
-    }
-
-    .home:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 14px 30px rgba(17, 24, 39, 0.25);
-    }
-
-    .home:active {
-      transform: scale(0.96);
-    }
-
-    .arrow {
-      transition: transform 0.25s ease;
-    }
-
-    .home:hover .arrow {
-      transform: translateX(4px);
-    }
-
-    @keyframes floating {
-      0%, 100% {
-        transform: translateY(0);
-      }
-      50% {
-        transform: translateY(-12px);
-      }
-    }
-
-    @keyframes bounce {
-      0%, 100% {
-        transform: translateY(0);
-      }
-      50% {
-        transform: translateY(-8px);
-      }
-    }
-
-    @keyframes float {
-      0%, 100% {
-        transform: translate(0, 0) scale(1);
-      }
-      50% {
-        transform: translate(25px, -30px) scale(1.08);
-      }
-    }
-
-    @keyframes appear {
-      from {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    @media (max-width: 500px) {
-      .number {
-        letter-spacing: -7px;
-      }
-
-      h1 {
-        margin-top: 28px;
-      }
-
-      p {
-        font-size: 15px;
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      *,
-      *::before,
-      *::after {
-        animation: none !important;
-        transition: none !important;
-      }
-    }
-  </style>
+  footer {
+    text-align: center;
+    padding: 20px;
+    font-size: 13px;
+    color: var(--muted);
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+  }
+  footer div + div { margin-top: 4px; }
+</style>
 </head>
-
 <body>
 
-  <div class="background">
-    <div class="circle"></div>
-    <div class="circle"></div>
-    <div class="circle"></div>
-  </div>
+  <header>
+    <a href="/">LG CHEM</a>
+  </header>
 
-  <main class="container">
-    <div class="number">
-      <span>4</span><span>0</span><span>4</span>
+  <main>
+    <div class="box">
+      <h1>404</h1>
+      <h2>Page Not Found</h2>
+      <p>The page you're looking for doesn't exist or has been moved.</p>
+      <a class="btn" href="/">Back to Home</a>
     </div>
-
-    <h1>Page Not Found</h1>
-
-    <p>
-      The page you're looking for doesn't exist or may have been moved.
-    </p>
-
-    <a href="/" class="home">
-      Go Home
-      <span class="arrow">→</span>
-    </a>
   </main>
+
+  <footer>
+    <div>&copy; 2026 LG CHEM. All rights reserved.</div>
+    <div>Tikapur 3, Kailali, Nepal</div>
+  </footer>
 
 </body>
 </html>

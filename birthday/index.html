@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Happy Birthday!</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Two background layers that crossfade with the photo colours -->
+  <div class="bg" id="bgA"></div>
+  <div class="bg" id="bgB"></div>
+  <div class="vignette"></div>
+
+  <div id="balloons"></div>
+  <div id="sparkles"></div>
+  <canvas id="confetti"></canvas>
+
+  <button id="musicBtn" class="music" aria-label="Toggle music" title="Music on/off">🔇</button>
+
+  <!-- Intro -->
+  <section id="intro" class="screen active">
+    <div class="cake">🎂</div>
+    <h1 class="title">Happy Birthday<span id="nameIntro"></span>!</h1>
+    <p class="sub">A little surprise for you</p>
+    <button id="startBtn" class="btn">🎉 Open Surprise</button>
+  </section>
+
+  <!-- Main show -->
+  <section id="show" class="screen">
+    <h1 class="title small">🎈 Happy Birthday<span id="nameShow"></span>! 🎈</h1>
+
+    <div class="pic" id="pic">
+      <div class="glow" id="glow"></div>
+      <div class="frame">
+        <img id="photo" alt="Birthday photo" />
+        <div class="ribbon">🎀</div>
+      </div>
+    </div>
+    <div class="dots" id="dots"></div>
+
+    <p class="message" id="message"></p>
+
+    <div class="controls">
+      <button id="prevBtn" class="btn ghost" aria-label="Previous photo">‹</button>
+      <button id="burstBtn" class="btn">🎊 Confetti</button>
+      <button id="nextBtn" class="btn ghost" aria-label="Next photo">›</button>
+    </div>
+  </section>
+
+  <script src="palettes.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
