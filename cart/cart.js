@@ -63,6 +63,20 @@ function wireUserMenu() {
 }
 
 let currentCartUid = null;
+let cartItems = [];
+let cartView = 'cart';
+let selectedPayment = 'cash';
+let checkoutDraft = { name: '', phone: '', address: '' };
+let placing = false;
+
+function escapeHtml(str) {
+    return String(str === undefined || str === null ? '' : str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
 
 function priceToNumber(priceStr) {
     if (!priceStr) return 0;
@@ -73,6 +87,18 @@ function priceToNumber(priceStr) {
 
 function formatMoney(n) {
     return 'Rs. ' + n.toLocaleString('en-IN', { maximumFractionDigits: 2 });
+}
+
+function cartSubtotal(items) {
+    return items.reduce(function (sum, item) {
+        return sum + priceToNumber(item.price) * (Number(item.qty) || 1);
+    }, 0);
+}
+
+function cartTotalQty(items) {
+    return items.reduce(function (sum, item) {
+        return sum + (Number(item.qty) || 1);
+    }, 0);
 }
 
 function renderCartLoggedOutState() {
@@ -122,24 +148,21 @@ function renderCart(items) {
         return;
     }
 
-    let subtotal = 0;
     const itemsHtml = items.map(function (item) {
-        const lineTotal = priceToNumber(item.price) * (item.qty || 1);
-        subtotal += lineTotal;
         return `
-            <div class="cart-item" data-key="${item.key}">
-                <img src="${item.image || 'https://via.placeholder.com/100x100?text=No+Image'}" alt="${item.name}" class="cart-item-image" onerror="this.src='https://via.placeholder.com/100x100?text=No+Image'">
+            <div class="cart-item" data-key="${escapeHtml(item.key)}">
+                <img src="${escapeHtml(item.image) || 'https://via.placeholder.com/100x100?text=No+Image'}" alt="${escapeHtml(item.name)}" class="cart-item-image" onerror="this.src='https://via.placeholder.com/100x100?text=No+Image'">
                 <div class="cart-item-info">
-                    <div class="cart-item-category">${item.category || ''}</div>
-                    <div class="cart-item-name">${item.name || 'Unnamed product'}</div>
-                    <div class="cart-item-price">${item.price || ''} <span class="cart-item-unit">${item.unit || ''}</span></div>
+                    <div class="cart-item-category">${escapeHtml(item.category)}</div>
+                    <div class="cart-item-name">${escapeHtml(item.name || 'Unnamed product')}</div>
+                    <div class="cart-item-price">${escapeHtml(item.price)} <span class="cart-item-unit">${escapeHtml(item.unit)}</span></div>
                     <div class="qty-controls">
-                        <button class="qty-btn" data-action="dec" data-key="${item.key}">−</button>
-                        <span class="qty-value" data-qty-for="${item.key}">${item.qty || 1}</span>
-                        <button class="qty-btn" data-action="inc" data-key="${item.key}">+</button>
+                        <button class="qty-btn" data-action="dec" data-key="${escapeHtml(item.key)}">−</button>
+                        <span class="qty-value" data-qty-for="${escapeHtml(item.key)}">${item.qty || 1}</span>
+                        <button class="qty-btn" data-action="inc" data-key="${escapeHtml(item.key)}">+</button>
                     </div>
                 </div>
-                <button class="remove-btn" data-action="remove" data-key="${item.key}" aria-label="Remove item">
+                <button class="remove-btn" data-action="remove" data-key="${escapeHtml(item.key)}" aria-label="Remove item">
                     <i class="fas fa-trash"></i>
                 </button>
             </div>
@@ -153,11 +176,11 @@ function renderCart(items) {
                 <h3>Order Summary</h3>
                 <div class="summary-row">
                     <span>Items</span>
-                    <span>${items.reduce(function (s, i) { return s + (i.qty || 1); }, 0)}</span>
+                    <span>${cartTotalQty(items)}</span>
                 </div>
                 <div class="summary-row total">
                     <span>Estimated Total</span>
-                    <span>${formatMoney(subtotal)}</span>
+                    <span>${formatMoney(cartSubtotal(items))}</span>
                 </div>
                 <p class="summary-note">Final pricing, delivery charges, and business/bulk discounts are confirmed at checkout.</p>
                 <button class="checkout-btn" id="checkoutBtn">
@@ -169,9 +192,256 @@ function renderCart(items) {
 
     wireCartItemControls();
 
-    document.getElementById('checkoutBtn').addEventListener('click', function () {
-        alert('Checkout isn\'t connected yet — this is where order placement will go.');
+    document.getElementById('checkoutBtn').addEventListener('click', openCheckout);
+}
+
+function openCheckout() {
+    if (!cartItems.length || !currentCartUid) return;
+    const root = document.getElementById('cartRoot');
+    cartView = 'checkout';
+    root.innerHTML = `
+        <div class="state-panel">
+            <i class="fas fa-spinner fa-spin"></i>
+            <h3>Preparing checkout…</h3>
+        </div>
+    `;
+
+    const session = window.LGSession ? window.LGSession.getCached() : null;
+    const profilePromise = window.LGChem && window.LGChem.getUserProfile
+        ? window.LGChem.getUserProfile(currentCartUid).catch(function () { return null; })
+        : Promise.resolve(null);
+
+    profilePromise.then(function (profile) {
+        if (cartView !== 'checkout') return;
+        if (!checkoutDraft.name && !checkoutDraft.phone && !checkoutDraft.address) {
+            checkoutDraft = {
+                name: (profile && profile.name) || (session && session.name) || '',
+                phone: (profile && profile.phone) || '',
+                address: (profile && profile.address) || ''
+            };
+        }
+        renderCheckout();
     });
+}
+
+function readDraftFromForm() {
+    const nameEl = document.getElementById('coName');
+    const phoneEl = document.getElementById('coPhone');
+    const addressEl = document.getElementById('coAddress');
+    if (nameEl) checkoutDraft.name = nameEl.value.trim();
+    if (phoneEl) checkoutDraft.phone = phoneEl.value.trim();
+    if (addressEl) checkoutDraft.address = addressEl.value.trim();
+}
+
+function renderCheckout() {
+    const root = document.getElementById('cartRoot');
+    if (!root) return;
+
+    if (!cartItems.length) {
+        cartView = 'cart';
+        renderCartEmptyState();
+        return;
+    }
+
+    const itemsHtml = cartItems.map(function (item) {
+        const qty = Number(item.qty) || 1;
+        const line = priceToNumber(item.price) * qty;
+        return `
+            <div class="co-item">
+                <img src="${escapeHtml(item.image) || 'https://via.placeholder.com/100x100?text=No+Image'}" alt="" class="co-item-image" onerror="this.src='https://via.placeholder.com/100x100?text=No+Image'">
+                <div class="co-item-info">
+                    <div class="co-item-name">${escapeHtml(item.name || 'Unnamed product')}</div>
+                    <div class="co-item-meta">${escapeHtml(item.price)} ${escapeHtml(item.unit)} × ${qty}</div>
+                </div>
+                <div class="co-item-total">${formatMoney(line)}</div>
+            </div>
+        `;
+    }).join('');
+
+    root.innerHTML = `
+        <div class="cart-layout">
+            <div class="checkout-main">
+                <div class="co-card">
+                    <h3><i class="fas fa-location-dot"></i> Delivery Details</h3>
+                    <div class="co-field">
+                        <label for="coName">Full Name</label>
+                        <input type="text" id="coName" value="${escapeHtml(checkoutDraft.name)}" placeholder="Your full name" autocomplete="name">
+                    </div>
+                    <div class="co-field">
+                        <label for="coPhone">Phone Number</label>
+                        <input type="tel" id="coPhone" value="${escapeHtml(checkoutDraft.phone)}" placeholder="Your phone number" autocomplete="tel">
+                    </div>
+                    <div class="co-field">
+                        <label for="coAddress">Delivery Address</label>
+                        <textarea id="coAddress" rows="3" placeholder="Your full delivery address">${escapeHtml(checkoutDraft.address)}</textarea>
+                    </div>
+                </div>
+
+                <div class="co-card">
+                    <h3><i class="fas fa-wallet"></i> Payment Method</h3>
+                    <label class="pay-option ${selectedPayment === 'cash' ? 'selected' : ''}">
+                        <input type="radio" name="payment" value="cash" ${selectedPayment === 'cash' ? 'checked' : ''}>
+                        <i class="fas fa-money-bill-wave"></i>
+                        <span><strong>Cash</strong><small>Pay when your order is delivered</small></span>
+                    </label>
+                    <label class="pay-option ${selectedPayment === 'online' ? 'selected' : ''}">
+                        <input type="radio" name="payment" value="online" ${selectedPayment === 'online' ? 'checked' : ''}>
+                        <i class="fas fa-credit-card"></i>
+                        <span><strong>Online</strong><small>Pay online</small></span>
+                    </label>
+                </div>
+
+                <div class="co-card">
+                    <h3><i class="fas fa-box"></i> Your Items</h3>
+                    ${itemsHtml}
+                </div>
+            </div>
+
+            <div class="summary-card">
+                <h3>Confirm Order</h3>
+                <div class="summary-row">
+                    <span>Items</span>
+                    <span>${cartTotalQty(cartItems)}</span>
+                </div>
+                <div class="summary-row total">
+                    <span>Total</span>
+                    <span>${formatMoney(cartSubtotal(cartItems))}</span>
+                </div>
+                <div class="co-error" id="coError"></div>
+                <button class="checkout-btn" id="confirmOrderBtn">
+                    <i class="fas fa-circle-check"></i> Confirm Order
+                </button>
+                <button class="back-btn" id="backToCartBtn">
+                    <i class="fas fa-arrow-left"></i> Back to Cart
+                </button>
+            </div>
+        </div>
+    `;
+
+    document.querySelectorAll('input[name="payment"]').forEach(function (radio) {
+        radio.addEventListener('change', function () {
+            selectedPayment = radio.value;
+            document.querySelectorAll('.pay-option').forEach(function (opt) {
+                const input = opt.querySelector('input');
+                opt.classList.toggle('selected', input.checked);
+            });
+        });
+    });
+
+    document.getElementById('backToCartBtn').addEventListener('click', function () {
+        readDraftFromForm();
+        cartView = 'cart';
+        renderCart(cartItems);
+    });
+
+    document.getElementById('confirmOrderBtn').addEventListener('click', placeOrder);
+}
+
+function showCheckoutError(message) {
+    const el = document.getElementById('coError');
+    if (el) el.textContent = message;
+}
+
+function placeOrder() {
+    if (placing) return;
+    readDraftFromForm();
+
+    if (!checkoutDraft.name) { showCheckoutError('Please enter your full name.'); return; }
+    if (!checkoutDraft.phone) { showCheckoutError('Please enter your phone number.'); return; }
+    if (!checkoutDraft.address) { showCheckoutError('Please enter your delivery address.'); return; }
+    if (!cartItems.length || !currentCartUid) { showCheckoutError('Your cart is empty.'); return; }
+    if (!window.LGChem || !window.LGChem.rtdb) { showCheckoutError('Could not connect to the database.'); return; }
+
+    placing = true;
+    showCheckoutError('');
+    const btn = document.getElementById('confirmOrderBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Placing order…';
+
+    const db = window.LGChem.rtdb;
+    const uid = currentCartUid;
+    const orderId = db.ref('orders').push().key;
+
+    const items = {};
+    cartItems.forEach(function (item) {
+        items[item.key] = {
+            productId: item.key,
+            name: item.name || 'Unnamed product',
+            price: item.price || '',
+            unit: item.unit || '',
+            qty: Number(item.qty) || 1
+        };
+    });
+
+    const order = {
+        orderId: orderId,
+        uid: uid,
+        items: items,
+        status: 'pending',
+        payment: selectedPayment,
+        total: cartSubtotal(cartItems),
+        customerName: checkoutDraft.name,
+        phone: checkoutDraft.phone,
+        address: checkoutDraft.address,
+        createdAt: new Date().toISOString()
+    };
+
+    const updates = {};
+    updates['orders/' + orderId] = order;
+    updates['carts/' + uid] = null;
+
+    db.ref().update(updates)
+        .then(function () {
+            cartView = 'placed';
+            placing = false;
+            renderOrderPending(order);
+        })
+        .catch(function (err) {
+            console.error('Failed to place order:', err);
+            placing = false;
+            const b = document.getElementById('confirmOrderBtn');
+            if (b) {
+                b.disabled = false;
+                b.innerHTML = '<i class="fas fa-circle-check"></i> Confirm Order';
+            }
+            showCheckoutError('Could not place your order. Please try again.');
+        });
+}
+
+function renderOrderPending(order) {
+    const root = document.getElementById('cartRoot');
+    if (!root) return;
+
+    const itemsHtml = Object.keys(order.items).map(function (key) {
+        const i = order.items[key];
+        return `
+            <div class="pending-item">
+                <span>${escapeHtml(i.name)}</span>
+                <span>× ${i.qty}</span>
+            </div>
+        `;
+    }).join('');
+
+    root.innerHTML = `
+        <div class="pending-card">
+            <div class="pending-icon"><i class="fas fa-hourglass-half"></i></div>
+            <h3>Order Placed</h3>
+            <span class="status-pill">Pending</span>
+            <p class="pending-note">Thank you, ${escapeHtml(order.customerName)}. We've received your order and it is waiting for confirmation.</p>
+
+            <div class="pending-details">
+                <div class="summary-row"><span>Order ID</span><span class="mono">${escapeHtml(order.orderId)}</span></div>
+                <div class="summary-row"><span>Status</span><span>Pending</span></div>
+                <div class="summary-row"><span>Payment</span><span>${order.payment === 'cash' ? 'Cash' : 'Online'}</span></div>
+                <div class="summary-row"><span>Phone</span><span>${escapeHtml(order.phone)}</span></div>
+                <div class="summary-row"><span>Address</span><span class="right">${escapeHtml(order.address)}</span></div>
+                <div class="pending-items">${itemsHtml}</div>
+                <div class="summary-row total"><span>Total</span><span>${formatMoney(order.total)}</span></div>
+            </div>
+
+            <a href="${BASE}index.html#products" class="shop-link"><i class="fas fa-bag-shopping"></i> Continue Shopping</a>
+        </div>
+    `;
 }
 
 function wireCartItemControls() {
@@ -232,10 +502,18 @@ function loadCart(uid) {
 
     window.LGChem.rtdb.ref('carts/' + uid).on('value', function (snapshot) {
         const val = snapshot.val();
-        const items = val
+        cartItems = val
             ? Object.keys(val).map(function (key) { return Object.assign({ key: key }, val[key]); })
             : [];
-        renderCart(items);
+
+        if (cartView === 'cart') {
+            renderCart(cartItems);
+        } else if (cartView === 'checkout' && !placing) {
+            if (cartItems.length === 0) {
+                cartView = 'cart';
+                renderCartEmptyState();
+            }
+        }
     }, function (err) {
         console.error('Failed to load cart:', err);
         renderCartErrorState();
@@ -252,6 +530,7 @@ function wireCartPage() {
         if (session) {
             if (currentCartUid !== session.uid) {
                 currentCartUid = session.uid;
+                cartView = 'cart';
                 loadCart(currentCartUid);
             }
         } else {
@@ -259,6 +538,8 @@ function wireCartPage() {
                 window.LGChem.rtdb.ref('carts/' + currentCartUid).off();
             }
             currentCartUid = null;
+            cartItems = [];
+            cartView = 'cart';
             renderCartLoggedOutState();
         }
     });
