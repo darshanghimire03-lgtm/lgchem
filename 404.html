@@ -1,105 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
-<title>404 - Page Not Found | LG CHEM</title>
-<style>
-  /* ===== CHANGE THESE 5 COLORS TO MATCH YOUR SITE ===== */
-  :root {
-    --primary: #0b5ed7;      /* header, button, accents */
-    --primary-dark: #084298; /* button hover */
-    --bg: #f4f7fb;          /* page background */
-    --text: #1f2937;        /* main text */
-    --muted: #6b7280;       /* secondary text */
-  }
-  /* ==================================================== */
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-    background: var(--bg);
-    color: var(--text);
-  }
-
-  header {
-    background: var(--primary);
-    color: #fff;
-    padding: 16px 24px;
-  }
-  header a {
-    color: #fff;
-    text-decoration: none;
-    font-size: 20px;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-  }
-
-  main {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 40px 20px;
-  }
-  .box { max-width: 440px; }
-  h1 {
-    font-size: 96px;
-    font-weight: 800;
-    color: var(--primary);
-    letter-spacing: -2px;
-    line-height: 1;
-  }
-  h2 { font-size: 24px; margin: 12px 0; }
-  p { color: var(--muted); line-height: 1.6; margin-bottom: 28px; }
-  .btn {
-    display: inline-block;
-    padding: 12px 30px;
-    background: var(--primary);
-    color: #fff;
-    text-decoration: none;
-    border-radius: 8px;
-    font-size: 15px;
-    font-weight: 600;
-    transition: background 0.2s;
-  }
-  .btn:hover { background: var(--primary-dark); }
-
-  footer {
-    text-align: center;
-    padding: 20px;
-    font-size: 13px;
-    color: var(--muted);
-    border-top: 1px solid rgba(0, 0, 0, 0.08);
-  }
-  footer div + div { margin-top: 4px; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Page not found | LG CHEM</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/common.css">
+    <style>
+        .nf { flex: 1; display: grid; place-items: center; text-align: center; padding: 60px 20px; }
+        .nf h1 { font-size: clamp(4.5rem, 14vw, 7rem); line-height: 1; color: var(--dark-blue); }
+        .nf h2 { font-size: 1.4rem; margin: 12px 0 8px; color: var(--dark-blue); }
+        .nf p { color: var(--text-light); max-width: 420px; margin: 0 auto 28px; }
+        .nf a.btn { display: inline-block; background: var(--bright-green); color: #fff; padding: 12px 28px; border-radius: 8px; font-weight: 600; text-decoration: none; }
+        .nf a.btn:hover { background: #006a00; }
+    </style>
 </head>
 <body>
-
-  <header>
-    <a href="/">LG CHEM</a>
-  </header>
-
-  <main>
-    <div class="box">
-      <h1>404</h1>
-      <h2>Page Not Found</h2>
-      <p>The page you're looking for doesn't exist or has been moved.</p>
-      <a class="btn" href="/">Back to Home</a>
-    </div>
-  </main>
-
-  <footer>
-    <div>&copy; 2026 LG CHEM. All rights reserved.</div>
-    <div>Tikapur 3, Kailali, Nepal</div>
-  </footer>
-
+    <nav class="navbar">
+        <a href="/" class="brand-container">
+            <img src="/favicon.png" alt="LG CHEM logo" class="brand-logo">
+            <div class="brand-name">LG <span>CHEM</span></div>
+        </a>
+    </nav>
+    <main class="nf">
+        <div>
+            <h1>404</h1>
+            <h2>This page doesn't exist</h2>
+            <p>The link may be broken or the page may have moved. Head back to the store to keep browsing.</p>
+            <a class="btn" href="/">Back to home</a>
+        </div>
+    </main>
+    <footer class="footer">
+        <p>&copy; 2026 <span>LG CHEM</span>. All rights reserved. · Tikapur 3, Kailali, Nepal</p>
+    </footer>
 </body>
 </html>

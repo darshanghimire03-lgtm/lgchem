@@ -4,13 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google-site-verification" content="Py2a6rlmxbYSWTwFtdBbKPvU0b-7EQ97cfKU4Nh0oDA" />
-    <title>LG CHEM</title>
-
+    <meta name="description" content="LG CHEM — quality chemical products with clear specifications, fair pricing and reliable delivery in Tikapur, Kailali, Nepal.">
+    <title>LG CHEM | Quality Chemical Products</title>
+    <meta property="og:site_name" content="LG CHEM">
+    <link rel="canonical" href="https://lgchem.com.np/">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "LG CHEM",
+      "alternateName": "LG Chem Nepal",
+      "url": "https://lgchem.com.np/"
+    }
+    </script>
     <link rel="icon" type="image/png" href="favicon.png">
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-
     <link rel="stylesheet" href="common.css">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -18,28 +27,29 @@
 
     <nav class="navbar">
         <a href="index.html" class="brand-container">
-            <img src="favicon.png" alt="LG CHEM Logo" class="brand-logo">
+            <img src="favicon.png" alt="LG CHEM logo" class="brand-logo">
             <div class="brand-name">LG <span>CHEM</span></div>
         </a>
+        <div class="nav-links">
+            <a href="index.html" class="active">Home</a>
+            <a href="#products">Products</a>
+            <a href="about/index.html">About</a>
+        </div>
         <div class="nav-icons">
-            <a href="auth/index.html" class="icon-btn" id="profileLink" aria-label="Profile">
-                <i class="fas fa-user-circle"></i>
-            </a>
-
+            <a href="auth/index.html" class="icon-btn" id="profileLink" aria-label="Sign in"><i class="fas fa-user-circle"></i></a>
             <div class="user-menu" id="userMenu">
                 <div class="user-chip" id="userChip">
                     <div class="user-avatar" id="userAvatar">?</div>
                     <span class="user-name" id="userNameLabel">Account</span>
-                    <i class="fas fa-chevron-down" style="font-size:0.7rem;"></i>
+                    <i class="fas fa-chevron-down" style="font-size:.7rem;"></i>
                 </div>
                 <div class="user-dropdown" id="userDropdown">
                     <span class="account-type-badge" id="userTypeBadge">Customer</span>
                     <a href="user/index.html"><i class="fas fa-id-card"></i> My Account</a>
                     <a href="#"><i class="fas fa-box"></i> My Orders</a>
-                    <button class="logout-item" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                    <button class="logout-item" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Log out</button>
                 </div>
             </div>
-
             <a href="cart/index.html" class="icon-btn" aria-label="Cart">
                 <i class="fas fa-shopping-cart"></i>
                 <span class="cart-badge" id="cartBadge">0</span>
@@ -47,28 +57,73 @@
         </div>
     </nav>
 
-    <section class="hero-section">
-        <div class="hero-card">
-            <div class="hero-overlay"></div>
-            <div class="hero-content">
-                <p>A professional online store for quality chemical products, offering reliable products, clear specifications, competitive pricing, and convenient ordering for businesses and customers.</p>
-                <a href="#products" class="shop-btn">
-                    Shop Now <i class="fas fa-arrow-right"></i>
-                </a>
+    <header class="hero">
+        <div class="container">
+            <h1>Chemical products you can order with confidence</h1>
+            <p>Clear specifications, competitive pricing and convenient ordering for businesses and customers across Kailali.</p>
+            <div class="hero-actions">
+                <a href="#products" class="btn btn-primary">Browse products <i class="fas fa-arrow-right"></i></a>
+                <a href="about/index.html" class="btn btn-ghost">About us</a>
             </div>
         </div>
-    </section>
+    </header>
 
-    <section class="products-section" id="products">
-        <h2 class="section-title">Our <span>Products</span></h2>
-        <div class="product-grid" id="productGrid">
-            <div class="loading-text">Loading products...</div>
+    <section class="trust" aria-label="Why choose us">
+        <div class="container trust-grid">
+            <div class="trust-item"><i class="fas fa-circle-check"></i><div><strong>Quality assured</strong><span>Reliable products</span></div></div>
+            <div class="trust-item"><i class="fas fa-file-lines"></i><div><strong>Clear specifications</strong><span>Know what you order</span></div></div>
+            <div class="trust-item"><i class="fas fa-tags"></i><div><strong>Fair pricing</strong><span>Transparent rates</span></div></div>
+            <div class="trust-item"><i class="fas fa-truck-fast"></i><div><strong>Dependable delivery</strong><span>From Tikapur to you</span></div></div>
         </div>
     </section>
 
-    <footer class="footer">
-        <p>&copy; 2026 <span>LG CHEM</span>. All rights reserved.</p>
-        <p style="font-size: 0.8rem; margin-top: 5px; opacity: 0.7;">Tikapur 3, Kailali, Nepal</p>
+    <main class="products-section" id="products">
+        <div class="container">
+            <div class="section-head">
+                <div>
+                    <h2 class="section-title">Our products</h2>
+                    <p class="section-sub">Choose a category or search by name.</p>
+                </div>
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="search" id="searchInput" placeholder="Search products" aria-label="Search products">
+                </div>
+            </div>
+            <div class="filters" id="filters" role="group" aria-label="Filter by category"></div>
+            <div class="product-grid" id="productGrid">
+                <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
+            </div>
+        </div>
+    </main>
+
+    <section class="cta-band">
+        <div class="container">
+            <div>
+                <h2>Selling chemical products?</h2>
+                <p>Create a seller account and list your products with LG CHEM.</p>
+            </div>
+            <a href="auth/index.html" class="btn btn-primary">Create an account</a>
+        </div>
+    </section>
+
+    <footer class="site-footer">
+        <div class="container footer-grid">
+            <div>
+                <h4>LG CHEM</h4>
+                <p>A professional online store for quality chemical products.</p>
+            </div>
+            <div>
+                <h4>Quick links</h4>
+                <a href="#products">Products</a>
+                <a href="about/index.html">About us</a>
+                <a href="cart/index.html">Cart</a>
+            </div>
+            <div>
+                <h4>Contact</h4>
+                <p><i class="fas fa-location-dot"></i> Tikapur 3, Kailali, Nepal</p>
+            </div>
+        </div>
+        <div class="footer-bottom">&copy; 2026 <span>LG CHEM</span>. All rights reserved.</div>
     </footer>
 
     <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
@@ -76,8 +131,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-database-compat.js"></script>
     <script src="firebase-config.js"></script>
     <script src="auth.js"></script>
+    <script src="cart-helper.js"></script>
     <script src="script.js"></script>
-    <script src="../cart-helper.js"></script>
-
 </body>
 </html>
