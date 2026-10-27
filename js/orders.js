@@ -29,6 +29,14 @@
     let activeUid = null;
     let loadToken = 0;
 
+    function cleanUrl() {
+        if (!window.history || !window.history.replaceState) return;
+        let path = window.location.pathname.replace(/index\.html$/, '').replace(/\/+$/, '');
+        if (!path) path = '/';
+        if (path === window.location.pathname) return;
+        window.history.replaceState(null, '', path + window.location.search + window.location.hash);
+    }
+
     function escapeHtml(value) {
         if (value === undefined || value === null) return '';
         return String(value)
@@ -326,6 +334,8 @@
 
     function init() {
         if (!ordersRoot()) return;
+
+        cleanUrl();
 
         if (!window.LGSession) {
             renderError({ message: 'auth.js did not load. Check the script tag path js/auth.js.' });
