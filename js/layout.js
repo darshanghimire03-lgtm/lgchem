@@ -1,6 +1,19 @@
 (function () {
+    function cleanUrl() {
+        if (!window.history || !window.history.replaceState) return;
+        const path = window.location.pathname;
+        if (!/index\.html$/.test(path)) return;
+        let next = path.replace(/index\.html$/, '');
+        if (next.length > 1) next = next.replace(/\/+$/, '');
+        if (!next) next = '/';
+        window.history.replaceState(null, '', next + window.location.search + window.location.hash);
+    }
+
+    cleanUrl();
+
     const body = document.body;
     const base = body.getAttribute('data-base') || '';
+    const home = base || './';
     const active = body.getAttribute('data-active') || '';
     const scripts = (body.getAttribute('data-scripts') || '')
         .split(',')
@@ -18,7 +31,7 @@
                 return res.text();
             })
             .then(function (html) {
-                return html.split('{{base}}').join(base);
+                return html.split('{{home}}').join(home).split('{{base}}').join(base);
             });
     }
 
