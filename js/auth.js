@@ -334,7 +334,7 @@ function handleLogin(event) {
         .then(function () {
             showMsg('loginMsg', 'Login successful! Redirecting…', 'success');
             setTimeout(function () {
-                window.location.href = '../user/index.html';
+                window.location.href = 'user/index.html';
             }, 700);
         })
         .catch(function (err) {
@@ -416,7 +416,7 @@ function handleSignup(event) {
 
             showMsg('signupMsg', 'Account created successfully! Redirecting…', 'success');
             setTimeout(function () {
-                window.location.href = '../user/index.html';
+                window.location.href = 'user/index.html';
             }, 900);
         })
         .catch(function (err) {

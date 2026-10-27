@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Admin Login - LG CHEM</title>
+<link rel="icon" type="image/png" href="../favicon.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--blue:#002B5B;--green:#008000;--bg:#f4f8fb;--line:#e3e9f0;--text:#1f2937;--muted:#5b6675;--red:#d9534f}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',system-ui,sans-serif}
+body{background:linear-gradient(135deg,#002B5B,#001a38);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;color:var(--text)}
+.card{background:#fff;width:100%;max-width:420px;border-radius:16px;padding:32px 28px;box-shadow:0 20px 50px rgba(0,0,0,.3)}
+.brand{text-align:center;font-size:1.6rem;font-weight:700;color:var(--blue)}
+.brand span{color:var(--green)}
+.sub{text-align:center;color:var(--muted);font-size:.85rem;margin:4px 0 20px}
+.tabs{display:flex;background:var(--bg);border-radius:10px;padding:4px;margin-bottom:20px}
+.tab{flex:1;text-align:center;padding:9px;border-radius:8px;cursor:pointer;font-weight:600;font-size:.9rem;color:var(--muted)}
+.tab.active{background:#fff;color:var(--blue);box-shadow:0 1px 4px rgba(0,43,91,.15)}
+form{display:none}
+form.active{display:block}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:.8rem;font-weight:600;margin-bottom:5px}
+.wrap{position:relative}
+.wrap i.lead{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.85rem}
+.wrap i.eye{position:absolute;right:13px;top:50%;transform:translateY(-50%);color:var(--muted);cursor:pointer;font-size:.85rem}
+.wrap input{width:100%;padding:11px 38px;border:1px solid var(--line);border-radius:10px;font-size:.92rem;outline:none}
+.wrap input:focus{border-color:var(--green)}
+.btn{width:100%;padding:12px;border:0;border-radius:10px;background:var(--green);color:#fff;font-weight:600;font-size:.95rem;cursor:pointer;margin-top:6px}
+.btn:disabled{opacity:.65;cursor:not-allowed}
+.msg{display:none;padding:10px 12px;border-radius:8px;font-size:.84rem;margin-bottom:14px}
+.msg.error{display:block;background:#fdecea;color:#b3261e}
+.msg.success{display:block;background:#e8f3e8;color:#1b6b1b}
+</style>
+</head>
+<body>
+<div class="card">
+    <div class="brand">LG <span>CHEM</span></div>
+    <div class="sub">Admin Panel</div>
+
+    <div class="tabs">
+        <div class="tab active" id="loginTab">Login</div>
+        <div class="tab" id="signupTab">Create Account</div>
+    </div>
+
+    <div class="msg" id="msg"></div>
+
+    <form id="loginForm" class="active">
+        <div class="field">
+            <label>Email</label>
+            <div class="wrap">
+                <i class="fas fa-envelope lead"></i>
+                <input type="email" id="loginEmail" placeholder="Enter your email" required>
+            </div>
+        </div>
+        <div class="field">
+            <label>Password</label>
+            <div class="wrap">
+                <i class="fas fa-lock lead"></i>
+                <input type="password" id="loginPass" placeholder="Enter your password" required>
+                <i class="fas fa-eye eye" data-target="loginPass"></i>
+            </div>
+        </div>
+        <button class="btn" type="submit" id="loginBtn">Login</button>
+    </form>
+
+    <form id="signupForm">
+        <div class="field">
+            <label>Full Name</label>
+            <div class="wrap">
+                <i class="fas fa-user lead"></i>
+                <input type="text" id="signName" placeholder="Enter your full name" required>
+            </div>
+        </div>
+        <div class="field">
+            <label>Email</label>
+            <div class="wrap">
+                <i class="fas fa-envelope lead"></i>
+                <input type="email" id="signEmail" placeholder="Enter your email" required>
+            </div>
+        </div>
+        <div class="field">
+            <label>Password</label>
+            <div class="wrap">
+                <i class="fas fa-lock lead"></i>
+                <input type="password" id="signPass" placeholder="Create a password" required>
+                <i class="fas fa-eye eye" data-target="signPass"></i>
+            </div>
+        </div>
+        <button class="btn" type="submit" id="signupBtn">Create Admin Account</button>
+    </form>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-database-compat.js"></script>
+<script src="../js/firebase-config.js"></script>
+<script>
+(function () {
+    var msg = document.getElementById('msg');
+    var loginTab = document.getElementById('loginTab');
+    var signupTab = document.getElementById('signupTab');
+    var loginForm = document.getElementById('loginForm');
+    var signupForm = document.getElementById('signupForm');
+    var loginBtn = document.getElementById('loginBtn');
+    var signupBtn = document.getElementById('signupBtn');
+
+    function show(text, type) {
+        msg.textContent = text;
+        msg.className = 'msg ' + type;
+    }
+
+    function clear() {
+        msg.textContent = '';
+        msg.className = 'msg';
+    }
+
+    function friendly(err) {
+        var code = err && err.code;
+        if (code === 'not-admin') return 'This account is not an admin account.';
+        if (code === 'auth/email-already-in-use') return 'An account with this email already exists.';
+        if (code === 'auth/invalid-email') return 'Please enter a valid email address.';
+        if (code === 'auth/weak-password') return 'Password should be at least 6 characters.';
+        if (code === 'auth/user-not-found' || code === 'auth/wrong-password' || code === 'auth/invalid-credential') return 'Incorrect email or password.';
+        if (code === 'auth/too-many-requests') return 'Too many attempts. Please wait and try again.';
+        if (code === 'PERMISSION_DENIED') return 'Permission denied by database rules.';
+        return (err && err.message) || 'Something went wrong. Please try again.';
+    }
+
+    function switchTab(tab) {
+        clear();
+        var isLogin = tab === 'login';
+        loginTab.classList.toggle('active', isLogin);
+        signupTab.classList.toggle('active', !isLogin);
+        loginForm.classList.toggle('active', isLogin);
+        signupForm.classList.toggle('active', !isLogin);
+    }
+
+    loginTab.addEventListener('click', function () { switchTab('login'); });
+    signupTab.addEventListener('click', function () { switchTab('signup'); });
+
+    document.querySelectorAll('.eye').forEach(function (icon) {
+        icon.addEventListener('click', function () {
+            var input = document.getElementById(icon.getAttribute('data-target'));
+            var hidden = input.type === 'password';
+            input.type = hidden ? 'text' : 'password';
+            icon.classList.toggle('fa-eye', !hidden);
+            icon.classList.toggle('fa-eye-slash', hidden);
+        });
+    });
+
+    if (!window.LGChem) {
+        show(window.LGChemInitError || 'Could not connect to Firebase.', 'error');
+        loginBtn.disabled = true;
+        signupBtn.disabled = true;
+        return;
+    }
+
+    var auth = window.LGChem.auth;
+    var db = window.LGChem.rtdb;
+    var busy = false;
+
+    auth.onAuthStateChanged(function (user) {
+        if (!user || busy) return;
+        db.ref('admins/' + user.uid).once('value').then(function (snap) {
+            if (snap.exists() && !busy) window.location.replace('index.html');
+        }).catch(function () {});
+    });
+
+    loginForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        clear();
+        var email = document.getElementById('loginEmail').value.trim();
+        var pass = document.getElementById('loginPass').value;
+        busy = true;
+        loginBtn.disabled = true;
+        loginBtn.textContent = 'Logging in…';
+
+        auth.signInWithEmailAndPassword(email, pass)
+            .then(function (cred) {
+                return db.ref('admins/' + cred.user.uid).once('value').then(function (snap) {
+                    if (!snap.exists()) {
+                        return auth.signOut().then(function () {
+                            throw { code: 'not-admin' };
+                        });
+                    }
+                    show('Login successful! Redirecting…', 'success');
+                    window.location.replace('index.html');
+                });
+            })
+            .catch(function (err) {
+                busy = false;
+                show(friendly(err), 'error');
+                loginBtn.disabled = false;
+                loginBtn.textContent = 'Login';
+            });
+    });
+
+    signupForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        clear();
+        var name = document.getElementById('signName').value.trim();
+        var email = document.getElementById('signEmail').value.trim();
+        var pass = document.getElementById('signPass').value;
+
+        if (!name) { show('Please enter your full name.', 'error'); return; }
+        if (pass.length < 6) { show('Password should be at least 6 characters.', 'error'); return; }
+
+        busy = true;
+        signupBtn.disabled = true;
+        signupBtn.textContent = 'Creating account…';
+
+        auth.createUserWithEmailAndPassword(email, pass)
+            .then(function (cred) {
+                var user = cred.user;
+                var record = {
+                    fullName: name,
+                    email: email,
+                    uid: user.uid,
+                    createdAt: new Date().toISOString()
+                };
+                return user.updateProfile({ displayName: name })
+                    .then(function () { return db.ref('admins/' + user.uid).set(record); })
+                    .then(function () {
+                        show('Admin account created! Redirecting…', 'success');
+                        window.location.replace('index.html');
+                    })
+                    .catch(function (err) {
+                        return user.delete().then(function () { throw err; }, function () { throw err; });
+                    });
+            })
+            .catch(function (err) {
+                busy = false;
+                show(friendly(err), 'error');
+                signupBtn.disabled = false;
+                signupBtn.textContent = 'Create Admin Account';
+            });
+    });
+})();
+</script>
+</body>
+</html>

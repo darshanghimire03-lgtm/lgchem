@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Orders - LG CHEM Admin</title>
+<link rel="icon" type="image/png" href="../favicon.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--blue:#002B5B;--green:#008000;--bg:#f4f8fb;--line:#e3e9f0;--text:#1f2937;--muted:#5b6675;--red:#d9534f}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',system-ui,sans-serif}
+body{background:var(--bg);color:var(--text);min-height:100vh}
+.splash{display:flex;align-items:center;justify-content:center;min-height:100vh;color:var(--muted);gap:10px}
+body.ready .splash{display:none}
+.topbar,.page{display:none}
+body.ready .topbar{display:flex}
+body.ready .page{display:block}
+.topbar{background:var(--blue);color:#fff;align-items:center;justify-content:space-between;gap:12px;padding:12px 5%;flex-wrap:wrap}
+.brand{font-weight:700;font-size:1.2rem}
+.brand span{color:#6fdc6f}
+.nav{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.nav a,.nav button{color:#fff;text-decoration:none;background:transparent;border:0;padding:8px 14px;border-radius:8px;font-size:.88rem;cursor:pointer}
+.nav a.active{background:rgba(255,255,255,.18)}
+.nav a:hover,.nav button:hover{background:rgba(255,255,255,.12)}
+.who{font-size:.8rem;opacity:.8;padding:0 6px}
+.page{max-width:980px;margin:0 auto;padding:24px 5%}
+.page h2{color:var(--blue);font-size:1.2rem;margin-bottom:14px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 14px;font-size:.8rem;font-weight:600;cursor:pointer;color:var(--muted)}
+.chip.active{background:var(--blue);border-color:var(--blue);color:#fff}
+.order{background:#fff;border:1px solid var(--line);border-radius:14px;margin-bottom:12px;overflow:hidden}
+.head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;flex-wrap:wrap}
+.oid{font-weight:700;font-size:.92rem}
+.meta{font-size:.78rem;color:var(--muted)}
+.right{display:flex;align-items:center;gap:12px}
+.total{font-weight:700;color:var(--green)}
+.badge{padding:4px 11px;border-radius:999px;font-size:.72rem;font-weight:700;text-transform:uppercase}
+.s-pending{background:#fff4d6;color:#8a6100}
+.s-confirmed{background:#dcebff;color:#0b4a9c}
+.s-shipped{background:#e6e0ff;color:#4a2fa3}
+.s-delivered{background:#dff3df;color:#1b6b1b}
+.s-cancelled{background:#fdecea;color:#b3261e}
+.s-unknown{background:#eee;color:#555}
+.body{display:none;border-top:1px solid var(--line);padding:14px 16px;background:#fbfdff}
+.order.open .body{display:block}
+.info{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-bottom:14px}
+.info div{font-size:.84rem}
+.info b{display:block;font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.03em}
+table{width:100%;border-collapse:collapse;font-size:.84rem;margin-bottom:14px}
+th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line)}
+th{font-size:.72rem;color:var(--muted);text-transform:uppercase}
+td.num,th.num{text-align:right}
+.status-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.status-row label{font-size:.8rem;font-weight:600}
+.status-row select{padding:9px 12px;border:1px solid var(--line);border-radius:9px;font-size:.88rem;outline:none;background:#fff}
+.note{font-size:.78rem;color:var(--green);display:none}
+.note.err{color:var(--red)}
+.empty{text-align:center;color:var(--muted);padding:40px 10px;background:#fff;border:1px solid var(--line);border-radius:14px}
+</style>
+</head>
+<body>
+<div class="splash"><i class="fas fa-spinner fa-spin"></i> Checking access…</div>
+
+<header class="topbar">
+    <div class="brand">LG <span>CHEM</span> Admin</div>
+    <nav class="nav">
+        <a href="index.html"><i class="fas fa-flask"></i> Products</a>
+        <a href="orders.html" class="active"><i class="fas fa-box"></i> Orders</a>
+        <span class="who" id="who"></span>
+        <button type="button" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+    </nav>
+</header>
+
+<main class="page">
+    <h2><i class="fas fa-box"></i> All Orders</h2>
+    <div class="chips" id="chips"></div>
+    <div id="list"></div>
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-database-compat.js"></script>
+<script src="../js/firebase-config.js"></script>
+<script>
+(function () {
+    if (!window.LGChem) {
+        document.querySelector('.splash').textContent = window.LGChemInitError || 'Could not connect to Firebase.';
+        return;
+    }
+
+    var auth = window.LGChem.auth;
+    var db = window.LGChem.rtdb;
+    var STATUSES = ['pending', 'confirmed', 'shipped', 'delivered', 'cancelled'];
+
+    var orders = [];
+    var filter = 'all';
+    var openIds = {};
+    var started = false;
+
+    var el = function (id) { return document.getElementById(id); };
+    var listEl = el('list');
+
+    function esc(v) {
+        return String(v == null ? '' : v).replace(/[&<>"']/g, function (c) {
+            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+        });
+    }
+
+    function money(n) {
+        return 'Rs. ' + (Number(n) || 0).toLocaleString('en-IN', { maximumFractionDigits: 2 });
+    }
+
+    function fmtDate(iso) {
+        var d = new Date(iso);
+        if (!iso || isNaN(d.getTime())) return 'Date unavailable';
+        return d.toLocaleString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit' });
+    }
+
+    function statusOf(o) {
+        var s = String(o.status || 'pending').toLowerCase();
+        return STATUSES.indexOf(s) !== -1 ? s : 'unknown';
+    }
+
+    function itemsOf(o) {
+        if (!o.items) return [];
+        return Object.keys(o.items).map(function (k) { return o.items[k]; });
+    }
+
+    function cap(s) {
+        return s.charAt(0).toUpperCase() + s.slice(1);
+    }
+
+    function renderChips() {
+        var all = ['all'].concat(STATUSES);
+        el('chips').innerHTML = all.map(function (s) {
+            var n = s === 'all' ? orders.length : orders.filter(function (o) { return statusOf(o) === s; }).length;
+            return '<button type="button" class="chip' + (s === filter ? ' active' : '') + '" data-f="' + s + '">' + cap(s) + ' (' + n + ')</button>';
+        }).join('');
+    }
+
+    function renderList() {
+        renderChips();
+        var list = orders.filter(function (o) { return filter === 'all' || statusOf(o) === filter; });
+
+        if (!list.length) {
+            listEl.innerHTML = '<div class="empty"><i class="fas fa-box-open"></i><br>No orders found.</div>';
+            return;
+        }
+
+        listEl.innerHTML = list.map(function (o) {
+            var st = statusOf(o);
+            var rows = itemsOf(o).map(function (i) {
+                return '<tr><td>' + esc(i.name) + '</td><td>' + esc(i.price) + ' ' + esc(i.unit) + '</td><td class="num">' + esc(i.qty) + '</td></tr>';
+            }).join('');
+            var options = STATUSES.map(function (s) {
+                return '<option value="' + s + '"' + (s === st ? ' selected' : '') + '>' + cap(s) + '</option>';
+            }).join('');
+
+            return '<div class="order' + (openIds[o.id] ? ' open' : '') + '" data-id="' + esc(o.id) + '">' +
+                '<div class="head" data-toggle="1">' +
+                    '<div>' +
+                        '<div class="oid">#' + esc(o.id.slice(-8).toUpperCase()) + ' · ' + esc(o.customerName || 'Customer') + '</div>' +
+                        '<div class="meta">' + esc(fmtDate(o.createdAt)) + '</div>' +
+                    '</div>' +
+                    '<div class="right">' +
+                        '<span class="total">' + money(o.total) + '</span>' +
+                        '<span class="badge s-' + st + '">' + esc(st) + '</span>' +
+                    '</div>' +
+                '</div>' +
+                '<div class="body">' +
+                    '<div class="info">' +
+                        '<div><b>Customer</b>' + esc(o.customerName || '-') + '</div>' +
+                        '<div><b>Phone</b>' + esc(o.phone || '-') + '</div>' +
+                        '<div><b>Address</b>' + esc(o.address || '-') + '</div>' +
+                        '<div><b>Payment</b>' + esc(o.payment || '-') + '</div>' +
+                    '</div>' +
+                    '<table><thead><tr><th>Item</th><th>Price</th><th class="num">Qty</th></tr></thead><tbody>' + rows + '</tbody></table>' +
+                    '<div class="status-row">' +
+                        '<label>Order status</label>' +
+                        '<select data-status="1">' + options + '</select>' +
+                        '<span class="note"></span>' +
+                    '</div>' +
+                '</div>' +
+            '</div>';
+        }).join('');
+    }
+
+    function loadOrders() {
+        db.ref('orders').on('value', function (snap) {
+            var val = snap.val();
+            orders = val ? Object.keys(val).map(function (k) { return Object.assign({ id: k }, val[k]); }) : [];
+            orders.sort(function (a, b) { return String(b.createdAt || '').localeCompare(String(a.createdAt || '')); });
+            renderList();
+        }, function (err) {
+            listEl.innerHTML = '<div class="empty">Could not load orders: ' + esc(err.message) + '</div>';
+        });
+    }
+
+    el('chips').addEventListener('click', function (e) {
+        var chip = e.target.closest('[data-f]');
+        if (!chip) return;
+        filter = chip.getAttribute('data-f');
+        renderList();
+    });
+
+    listEl.addEventListener('click', function (e) {
+        var head = e.target.closest('[data-toggle]');
+        if (!head) return;
+        var card = head.closest('.order');
+        var id = card.getAttribute('data-id');
+        openIds[id] = !openIds[id];
+        card.classList.toggle('open', openIds[id]);
+    });
+
+    listEl.addEventListener('change', function (e) {
+        var select = e.target.closest('[data-status]');
+        if (!select) return;
+        var card = select.closest('.order');
+        var id = card.getAttribute('data-id');
+        var note = card.querySelector('.note');
+        select.disabled = true;
+
+        db.ref('orders/' + id).update({
+            status: select.value,
+            updatedAt: new Date().toISOString()
+        }).then(function () {
+            note.className = 'note';
+            note.textContent = 'Status updated.';
+            note.style.display = 'inline';
+        }).catch(function (err) {
+            note.className = 'note err';
+            note.textContent = err.code === 'PERMISSION_DENIED' ? 'Permission denied by database rules.' : 'Could not update status.';
+            note.style.display = 'inline';
+            select.disabled = false;
+        });
+    });
+
+    el('logoutBtn').addEventListener('click', function () {
+        auth.signOut().then(function () { window.location.replace('auth.html'); });
+    });
+
+    auth.onAuthStateChanged(function (user) {
+        if (!user) {
+            window.location.replace('auth.html');
+            return;
+        }
+        db.ref('admins/' + user.uid).once('value').then(function (snap) {
+            if (!snap.exists()) {
+                return auth.signOut().then(function () { window.location.replace('auth.html'); });
+            }
+            if (started) return;
+            started = true;
+            var admin = snap.val();
+            el('who').textContent = admin.fullName || admin.email;
+            document.body.classList.add('ready');
+            loadOrders();
+        }).catch(function () {
+            window.location.replace('auth.html');
+        });
+    });
+})();
+</script>
+</body>
+</html>

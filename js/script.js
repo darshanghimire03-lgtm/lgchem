@@ -196,7 +196,7 @@ function addToCart(product, btn) {
     const uid = window.LGSession && window.LGSession.getUserId();
     if (!uid) {
         alert('Please log in to add items to your cart.');
-        window.location.href = BASE + 'auth/index.html';
+        window.location.href = BASE + 'auth.html';
         return;
     }
     if (!product.key || !window.LGCart) {

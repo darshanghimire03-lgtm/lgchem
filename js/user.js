@@ -122,7 +122,7 @@ function renderLoggedOutState() {
             <i class="fas fa-user-lock"></i>
             <h3>Please log in to view your account</h3>
             <p>Sign in to see your saved details, orders, and account settings.</p>
-            <a href="${BASE}auth/index.html" class="shop-link"><i class="fas fa-right-to-bracket"></i> Log In / Sign Up</a>
+            <a href="${BASE}auth.html" class="shop-link"><i class="fas fa-right-to-bracket"></i> Log In / Sign Up</a>
         </div>
     `;
     hideSettingsCard();

@@ -3,27 +3,28 @@
 
     const STATUS_META = {
         pending: { label: 'Pending', icon: 'fa-hourglass-half', step: 0 },
-        created: { label: 'Created', icon: 'fa-file-circle-plus', step: 1 },
         confirmed: { label: 'Confirmed', icon: 'fa-circle-check', step: 1 },
-        processing: { label: 'Processing', icon: 'fa-gears', step: 2 },
-        shipped: { label: 'Shipped', icon: 'fa-truck-fast', step: 3 },
-        delivered: { label: 'Delivered', icon: 'fa-box-open', step: 4 },
+        shipped: { label: 'Shipped', icon: 'fa-truck-fast', step: 2 },
+        delivered: { label: 'Delivered', icon: 'fa-box-open', step: 3 },
         cancelled: { label: 'Cancelled', icon: 'fa-ban', step: -1 }
     };
 
     const TIMELINE = [
         { key: 'pending', label: 'Pending' },
         { key: 'confirmed', label: 'Confirmed' },
-        { key: 'processing', label: 'Processing' },
         { key: 'shipped', label: 'Shipped' },
         { key: 'delivered', label: 'Delivered' }
     ];
 
-    const FILTERS = ['all', 'pending', 'created', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled'];
+    const FILTERS = ['all', 'pending', 'confirmed', 'shipped', 'delivered', 'cancelled'];
 
     let allOrders = [];
     let activeFilter = 'all';
     let openIds = {};
+    let confirmingId = null;
+    let busyIds = {};
+    let errorById = {};
+    let noticeTimer = null;
     let activeRef = null;
     let activeHandler = null;
     let activeUid = null;
@@ -84,6 +85,24 @@
     function ordersRoot() { return document.getElementById('ordersRoot'); }
     function tabsRoot() { return document.getElementById('ordersTabs'); }
 
+    function showNotice(text) {
+        const root = ordersRoot();
+        if (!root) return;
+        let el = document.getElementById('ordersNotice');
+        if (!el) {
+            el = document.createElement('div');
+            el.id = 'ordersNotice';
+            el.style.cssText = 'background:#e8f3e8;border:1px solid #bfdcbf;color:#0a6b0a;border-radius:10px;padding:10px 14px;font-size:0.85rem;font-weight:600;margin-bottom:16px;display:flex;align-items:center;gap:8px;';
+            root.parentNode.insertBefore(el, root);
+        }
+        el.innerHTML = '<i class="fas fa-circle-check"></i> ' + escapeHtml(text);
+        el.style.display = 'flex';
+        if (noticeTimer) clearTimeout(noticeTimer);
+        noticeTimer = setTimeout(function () {
+            el.style.display = 'none';
+        }, 3500);
+    }
+
     function renderSkeleton() {
         const root = ordersRoot();
         if (!root) return;
@@ -107,7 +126,7 @@
                 <i class="fas fa-user-lock"></i>
                 <h3>Please log in to view your orders</h3>
                 <p>Sign in to track the status of your orders.</p>
-                <a href="${BASE}auth/index.html" class="shop-link"><i class="fas fa-right-to-bracket"></i> Log In / Sign Up</a>
+                <a href="${BASE}auth.html" class="shop-link"><i class="fas fa-right-to-bracket"></i> Log In / Sign Up</a>
             </div>
         `;
     }
@@ -121,7 +140,7 @@
                 <i class="fas fa-box-open"></i>
                 <h3>No orders yet</h3>
                 <p>When you place an order, it will show up here with its status.</p>
-                <a href="${BASE}index.html#products" class="shop-link"><i class="fas fa-bag-shopping"></i> Shop Now</a>
+                <a href="${BASE || './'}#products" class="shop-link"><i class="fas fa-bag-shopping"></i> Shop Now</a>
             </div>
         `;
     }
@@ -219,10 +238,34 @@
         }, 0);
     }
 
+    function cancelAreaHtml(order) {
+        if (order.statusKey !== 'pending') return '';
+        const id = escapeHtml(order.id);
+
+        if (busyIds[order.id]) {
+            return '<button type="button" class="cancel-btn" disabled><i class="fas fa-spinner fa-spin"></i> Cancelling…</button>';
+        }
+
+        if (confirmingId === order.id) {
+            return `
+                <div class="cancel-confirm">
+                    <span>Cancel and remove this order?</span>
+                    <button type="button" class="cancel-yes" data-cancel-yes="${id}">Yes, cancel</button>
+                    <button type="button" class="cancel-keep" data-cancel-keep="${id}">Keep</button>
+                </div>
+            `;
+        }
+
+        return '<button type="button" class="cancel-btn" data-cancel="' + id + '"><i class="fas fa-xmark"></i> Cancel order</button>';
+    }
+
     function orderCardHtml(order) {
         const isOpen = !!openIds[order.id];
         const qty = totalQty(order);
         const payment = order.payment === 'cash' ? 'Cash' : (order.payment ? 'Online' : 'Not specified');
+        const error = errorById[order.id]
+            ? '<div class="order-error">' + escapeHtml(errorById[order.id]) + '</div>'
+            : '';
 
         return `
             <div class="order-card ${isOpen ? 'open' : ''}" data-id="${escapeHtml(order.id)}">
@@ -241,9 +284,14 @@
                     <span class="order-total">${formatMoney(order.total)}</span>
                 </div>
 
-                <button type="button" class="order-toggle" data-toggle="${escapeHtml(order.id)}">
-                    <span>${isOpen ? 'Hide details' : 'View details'}</span> <i class="fas fa-chevron-down"></i>
-                </button>
+                <div class="order-actions">
+                    <button type="button" class="order-toggle" data-toggle="${escapeHtml(order.id)}">
+                        <span>${isOpen ? 'Hide details' : 'View details'}</span> <i class="fas fa-chevron-down"></i>
+                    </button>
+                    ${cancelAreaHtml(order)}
+                </div>
+
+                ${error}
 
                 <div class="order-details">
                     ${timelineHtml(order)}
@@ -256,6 +304,45 @@
                 </div>
             </div>
         `;
+    }
+
+    function cancelOrder(id) {
+        if (!window.LGChem || !window.LGChem.rtdb) {
+            errorById[id] = 'Could not connect to the database.';
+            confirmingId = null;
+            renderList();
+            return;
+        }
+
+        busyIds[id] = true;
+        delete errorById[id];
+        renderList();
+
+        window.LGChem.rtdb.ref('orders/' + id).transaction(function (current) {
+            if (current === null) return current;
+            if (String(current.status || 'pending').toLowerCase() === 'pending') return null;
+            return undefined;
+        }).then(function (result) {
+            delete busyIds[id];
+            confirmingId = null;
+            if (!result.committed) {
+                errorById[id] = 'This order has already been confirmed, so it can no longer be cancelled.';
+                renderList();
+                return;
+            }
+            delete openIds[id];
+            delete errorById[id];
+            showNotice('Order cancelled and removed.');
+            if (allOrders.length) renderList();
+        }).catch(function (err) {
+            console.error('Failed to cancel order:', err);
+            delete busyIds[id];
+            confirmingId = null;
+            errorById[id] = err && err.code === 'PERMISSION_DENIED'
+                ? 'This order can no longer be cancelled.'
+                : 'Could not cancel the order. Please try again.';
+            renderList();
+        });
     }
 
     function renderList() {
@@ -281,6 +368,27 @@
                 openIds[id] = nowOpen;
                 card.classList.toggle('open', nowOpen);
                 btn.querySelector('span').textContent = nowOpen ? 'Hide details' : 'View details';
+            });
+        });
+
+        root.querySelectorAll('[data-cancel]').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                confirmingId = btn.getAttribute('data-cancel');
+                delete errorById[confirmingId];
+                renderList();
+            });
+        });
+
+        root.querySelectorAll('[data-cancel-keep]').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                confirmingId = null;
+                renderList();
+            });
+        });
+
+        root.querySelectorAll('[data-cancel-yes]').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                cancelOrder(btn.getAttribute('data-cancel-yes'));
             });
         });
     }
@@ -316,6 +424,13 @@
             }).sort(function (a, b) {
                 return String(b.createdAt || '').localeCompare(String(a.createdAt || ''));
             });
+
+            if (confirmingId) {
+                const stillPending = allOrders.some(function (o) {
+                    return o.id === confirmingId && o.statusKey === 'pending';
+                });
+                if (!stillPending) confirmingId = null;
+            }
 
             if (!allOrders.length) {
                 renderEmpty();

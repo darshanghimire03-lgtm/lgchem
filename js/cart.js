@@ -71,7 +71,7 @@
                 <i class="fas fa-user-lock"></i>
                 <h3>Please log in to view your cart</h3>
                 <p>Your cart is tied to your account so it's there whenever you come back.</p>
-                <a href="${BASE}auth/index.html" class="shop-link"><i class="fas fa-right-to-bracket"></i> Log In</a>
+                <a href="${BASE}auth.html" class="shop-link"><i class="fas fa-right-to-bracket"></i> Log In</a>
             </div>
         `;
     }
