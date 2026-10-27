@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
     <title>Page not found | LG CHEM</title>
+    <script>
+        (function () {
+            if (/^\/user\/[^\/]+\/?$/.test(window.location.pathname)) {
+                document.documentElement.style.display = 'none';
+                window.location.replace('/user/index.html' + window.location.search + window.location.hash);
+            }
+        })();
+    </script>
     <link rel="icon" type="image/png" href="/favicon.png">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/base.css">

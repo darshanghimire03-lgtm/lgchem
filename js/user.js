@@ -13,6 +13,15 @@ function escapeHtml(str) {
         .replace(/>/g, '&gt;');
 }
 
+function setProfileUrl(uid) {
+    if (!uid || !window.history || !window.history.replaceState) return;
+    const target = new URL('./' + encodeURIComponent(uid), window.location.href);
+    if (target.pathname === window.location.pathname) return;
+    target.search = window.location.search;
+    target.hash = window.location.hash;
+    window.history.replaceState(null, '', target.href);
+}
+
 function wireUserMenu() {
     const profileLink = document.getElementById('profileLink');
     const userMenu = document.getElementById('userMenu');
@@ -223,6 +232,8 @@ let loadToken = 0;
 function loadAccountForSession(session) {
     const root = document.getElementById('accountRoot');
     if (!root) return;
+
+    setProfileUrl(session.uid);
 
     const myToken = ++loadToken;
     renderSkeletonState();
@@ -467,6 +478,7 @@ function friendlyFirebaseError(err) {
 document.addEventListener('DOMContentLoaded', function () {
     wireUserMenu();
     wireUserPage();
+    wireSettingsLogout();
     wireChangePassword();
     wireDeleteAccount();
     wireHelpSupport();
