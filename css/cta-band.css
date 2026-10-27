@@ -1,0 +1,4 @@
+.cta-band { background: var(--dark-blue); color: #fff; }
+.cta-band .container { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; padding-top: 44px; padding-bottom: 44px; }
+.cta-band h2 { font-size: 1.4rem; margin-bottom: 4px; }
+.cta-band p { color: rgba(255,255,255,.8); font-size: .95rem; }

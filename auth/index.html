@@ -10,41 +10,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="../common.css">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/navbar.css">
+    <link rel="stylesheet" href="../css/user-menu.css">
+    <link rel="stylesheet" href="../css/auth.css">
+    <link rel="stylesheet" href="../css/signup-steps.css">
 </head>
-<body>
+<body data-base="../" data-active="auth" data-scripts="firebase-config,auth,cart-helper">
 
-    <nav class="navbar">
-        <a href="../index.html" class="brand-container">
-            <img src="../favicon.png" alt="LG CHEM Logo" class="brand-logo">
-            <div class="brand-name">LG <span>CHEM</span></div>
-        </a>
-        <div class="nav-icons">
-            <a href="#" class="icon-btn" id="profileLink" aria-label="Profile">
-                <i class="fas fa-user-circle"></i>
-            </a>
-
-            <div class="user-menu" id="userMenu">
-                <div class="user-chip" id="userChip">
-                    <div class="user-avatar" id="userAvatar">?</div>
-                    <span class="user-name" id="userNameLabel">Account</span>
-                    <i class="fas fa-chevron-down" style="font-size:0.7rem;"></i>
-                </div>
-                <div class="user-dropdown" id="userDropdown">
-                    <span class="account-type-badge" id="userTypeBadge">Customer</span>
-                    <a href="../user/index.html"><i class="fas fa-id-card"></i> My Account</a>
-                    <a href="#"><i class="fas fa-box"></i> My Orders</a>
-                    <button class="logout-item" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
-                </div>
-            </div>
-
-            <a href="../cart.html" class="icon-btn" aria-label="Cart">
-                <i class="fas fa-shopping-cart"></i>
-                <span class="cart-badge" id="cartBadge">0</span>
-            </a>
-        </div>
-    </nav>
+    <div data-include="navbar"></div>
 
     <div class="page-wrap">
     <div class="auth-container">
@@ -87,208 +61,9 @@
                     <div class="auth-tab" id="signupTab" onclick="switchTab('signup')">Sign Up</div>
                 </div>
 
-                <form class="auth-form active" id="loginForm" onsubmit="handleLogin(event)">
-                    <div class="form-msg" id="loginMsg"></div>
+                <div data-include="auth-login"></div>
 
-                    <div class="input-group">
-                        <label>Email Address</label>
-                        <div class="input-wrapper">
-                            <i class="fas fa-envelope"></i>
-                            <input type="email" id="loginEmail" placeholder="Enter your email" required>
-                        </div>
-                    </div>
-
-                    <div class="input-group">
-                        <label>Password</label>
-                        <div class="input-wrapper">
-                            <i class="fas fa-lock"></i>
-                            <input type="password" id="loginPassword" placeholder="Enter your password" required>
-                            <i class="fas fa-eye toggle-password" onclick="togglePassword('loginPassword', this)"></i>
-                        </div>
-                    </div>
-
-                    <div class="input-group" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                        <label style="display: flex; align-items: center; gap: 5px; font-weight: 400; margin-bottom: 0; cursor: pointer;">
-                            <input type="checkbox" style="width: auto; padding: 0; margin-right: 5px;"> Remember me
-                        </label>
-                        <a onclick="handleForgotPassword()" style="font-size: 0.8rem; color: var(--bright-green); text-decoration: none; font-weight: 600; cursor:pointer;">Forgot Password?</a>
-                    </div>
-
-                    <button type="submit" class="btn-submit" id="loginSubmitBtn">
-                        Login <i class="fas fa-arrow-right"></i>
-                    </button>
-
-                    <div class="form-footer">
-                        Don't have an account? <a onclick="switchTab('signup')">Sign up here</a>
-                    </div>
-                </form>
-
-                <form class="auth-form" id="signupForm" onsubmit="handleSignup(event)">
-                    <div class="form-msg" id="signupMsg"></div>
-
-                    <div class="step-indicator" id="stepIndicator"></div>
-
-                    <input type="hidden" id="accountType" value="">
-
-                    <!-- STEP 1: Choose account type -->
-                    <div class="signup-step active" id="step-type">
-                        <div class="input-group">
-                            <label>Account Type</label>
-                            <div class="account-type-selector">
-                                <div class="account-type-option" id="customerOption" onclick="selectAccountType('customer')">
-                                    <i class="fas fa-user"></i>
-                                    Customer
-                                </div>
-                                <div class="account-type-option" id="sellerOption" onclick="selectAccountType('seller')">
-                                    <i class="fas fa-store"></i>
-                                    Seller
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- CUSTOMER STEP 2: Full Name + Email -->
-                    <div class="signup-step" id="step-customer-2">
-                        <div class="input-group">
-                            <label>Full Name</label>
-                            <div class="input-wrapper">
-                                <i class="fas fa-user"></i>
-                                <input type="text" id="custNameInput" placeholder="Enter your full name">
-                            </div>
-                        </div>
-                        <div class="input-group">
-                            <label>Email Address</label>
-                            <div class="input-wrapper">
-                                <i class="fas fa-envelope"></i>
-                                <input type="email" id="custEmailInput" placeholder="Enter your email">
-                            </div>
-                        </div>
-                        <div class="step-actions">
-                            <button type="button" class="btn-outline-step" onclick="goToStep('step-type')"><i class="fas fa-arrow-left"></i> Back</button>
-                            <button type="button" class="btn-submit" onclick="goFromCustomerStep2()">Next <i class="fas fa-arrow-right"></i></button>
-                        </div>
-                    </div>
-
-                    <!-- CUSTOMER STEP 3: Address, Phone, Password -->
-                    <div class="signup-step" id="step-customer-3">
-                        <div class="input-group">
-                            <label>Address</label>
-                            <div class="input-wrapper">
-                                <i class="fas fa-map-marker-alt"></i>
-                                <input type="text" id="custAddressInput" placeholder="Enter your full address">
-                            </div>
-                        </div>
-                        <div class="input-group">
-                            <label>Phone Number</label>
-                            <div class="input-wrapper">
-                                <i class="fas fa-phone"></i>
-                                <input type="text" id="custPhoneInput" placeholder="Enter your phone number">
-                            </div>
-                        </div>
-                        <div class="input-group">
-                            <label>Password</label>
-                            <div class="input-wrapper">
-                                <i class="fas fa-lock"></i>
-                                <input type="password" id="custPasswordInput" placeholder="Create a password">
-                                <i class="fas fa-eye toggle-password" onclick="togglePassword('custPasswordInput', this)"></i>
-                            </div>
-                        </div>
-                        <div class="step-actions">
-                            <button type="button" class="btn-outline-step" onclick="goToStep('step-customer-2')"><i class="fas fa-arrow-left"></i> Back</button>
-                            <button type="submit" class="btn-submit" id="customerSubmitBtn">
-                                Create Account <i class="fas fa-user-plus"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- SELLER STEP 2: Shop Name + Shop Owner Name -->
-                    <div class="signup-step" id="step-seller-2">
-                        <div class="input-group">
-                            <label>Shop Name</label>
-                            <div class="input-wrapper">
-                                <i class="fas fa-store"></i>
-                                <input type="text" id="shopNameInput" placeholder="Enter your shop name">
-                            </div>
-                        </div>
-                        <div class="input-group">
-                            <label>Shop Owner Name</label>
-                            <div class="input-wrapper">
-                                <i class="fas fa-id-badge"></i>
-                                <input type="text" id="ownerNameInput" placeholder="Enter shop owner's full name">
-                            </div>
-                        </div>
-                        <div class="step-actions">
-                            <button type="button" class="btn-outline-step" onclick="goToStep('step-type')"><i class="fas fa-arrow-left"></i> Back</button>
-                            <button type="button" class="btn-submit" onclick="goFromSellerStep2()">Next <i class="fas fa-arrow-right"></i></button>
-                        </div>
-                    </div>
-
-                    <!-- SELLER STEP 3: Email + Address -->
-                    <div class="signup-step" id="step-seller-3">
-                        <div class="input-group">
-                            <label>Email Address</label>
-                            <div class="input-wrapper">
-                                <i class="fas fa-envelope"></i>
-                                <input type="email" id="sellerEmailInput" placeholder="Enter your email">
-                            </div>
-                        </div>
-                        <div class="input-group">
-                            <label>Address</label>
-                            <div class="input-wrapper">
-                                <i class="fas fa-map-marker-alt"></i>
-                                <input type="text" id="sellerAddressInput" placeholder="Enter your shop address">
-                            </div>
-                        </div>
-                        <div class="step-actions">
-                            <button type="button" class="btn-outline-step" onclick="goToStep('step-seller-2')"><i class="fas fa-arrow-left"></i> Back</button>
-                            <button type="button" class="btn-submit" onclick="goFromSellerStep3()">Next <i class="fas fa-arrow-right"></i></button>
-                        </div>
-                    </div>
-
-                    <!-- SELLER STEP 4: Phone + VAT/PAN No. -->
-                    <div class="signup-step" id="step-seller-4">
-                        <div class="input-group">
-                            <label>Phone Number</label>
-                            <div class="input-wrapper">
-                                <i class="fas fa-phone"></i>
-                                <input type="text" id="sellerPhoneInput" placeholder="Enter your phone number">
-                            </div>
-                        </div>
-                        <div class="input-group">
-                            <label>VAT/PAN No. <span style="color: var(--text-light); font-weight: 400;">(optional)</span></label>
-                            <div class="input-wrapper">
-                                <i class="fas fa-file-invoice"></i>
-                                <input type="text" id="vatInput" placeholder="Enter VAT/PAN registration number">
-                            </div>
-                        </div>
-                        <div class="step-actions">
-                            <button type="button" class="btn-outline-step" onclick="goToStep('step-seller-3')"><i class="fas fa-arrow-left"></i> Back</button>
-                            <button type="button" class="btn-submit" onclick="goFromSellerStep4()">Next <i class="fas fa-arrow-right"></i></button>
-                        </div>
-                    </div>
-
-                    <!-- SELLER STEP 5: Password -->
-                    <div class="signup-step" id="step-seller-5">
-                        <div class="input-group">
-                            <label>Password</label>
-                            <div class="input-wrapper">
-                                <i class="fas fa-lock"></i>
-                                <input type="password" id="sellerPasswordInput" placeholder="Create a password">
-                                <i class="fas fa-eye toggle-password" onclick="togglePassword('sellerPasswordInput', this)"></i>
-                            </div>
-                        </div>
-                        <div class="step-actions">
-                            <button type="button" class="btn-outline-step" onclick="goToStep('step-seller-4')"><i class="fas fa-arrow-left"></i> Back</button>
-                            <button type="submit" class="btn-submit" id="sellerSubmitBtn">
-                                Create Account <i class="fas fa-user-plus"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="form-footer">
-                        Already have an account? <a onclick="switchTab('login')">Login here</a>
-                    </div>
-                </form>
+                <div data-include="auth-signup"></div>
             </div>
 
         </div>
@@ -298,9 +73,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-database-compat.js"></script>
-    <script src="../firebase-config.js"></script>
-    <script src="../auth.js"></script>
-    <script src="../cart-helper.js"></script>
+    <script src="../js/layout.js"></script>
 
 </body>
 </html>

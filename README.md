@@ -1,2 +1,0 @@
-# lgchem
-new chemical website 

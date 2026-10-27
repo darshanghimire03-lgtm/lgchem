@@ -13,7 +13,6 @@ function initials(name) {
     return name ? name.trim().charAt(0).toUpperCase() : '?';
 }
 
-/* ---------- Navbar / user menu ---------- */
 function wireUserMenu() {
     const el = function (id) { return document.getElementById(id); };
     const profileLink = el('profileLink'), userMenu = el('userMenu'), userChip = el('userChip'),
@@ -62,7 +61,6 @@ function wireUserMenu() {
     window.LGSession.onChange(apply);
 }
 
-/* ---------- Products ---------- */
 function message(icon, text) {
     return '<div class="empty-text"><i class="fas ' + icon + '"></i>' + esc(text) + '</div>';
 }
@@ -163,7 +161,6 @@ function wireFilters() {
     }
 }
 
-/* ---------- Cart ---------- */
 function addToCart(product, btn) {
     const uid = window.LGSession && window.LGSession.getUserId();
     if (!uid) {

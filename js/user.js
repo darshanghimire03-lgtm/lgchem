@@ -259,7 +259,7 @@ function wireUserPage() {
     if (!root) return;
 
     if (!window.LGSession) {
-        renderErrorState({ message: 'auth.js did not load. Check the script tag path auth.js and that the file was uploaded.' }, runDiagnostics());
+        renderErrorState({ message: 'auth.js did not load. Check the script tag path js/auth.js and that the file was uploaded.' }, runDiagnostics());
         return;
     }
 
@@ -273,8 +273,6 @@ function wireUserPage() {
         }
     });
 }
-
-/* ---------------- Settings: modal helpers ---------------- */
 
 function openModal(id) {
     const el = document.getElementById(id);
@@ -299,8 +297,6 @@ function clearModalMsg(id) {
     el.textContent = '';
     el.className = 'modal-msg hidden';
 }
-
-/* ---------------- Settings: Change Password ---------------- */
 
 function wireChangePassword() {
     const changePasswordBtn = document.getElementById('changePasswordBtn');
@@ -369,8 +365,6 @@ function wireChangePassword() {
     });
 }
 
-/* ---------------- Settings: Delete Account ---------------- */
-
 function wireDeleteAccount() {
     const deleteAccountBtn = document.getElementById('deleteAccountBtn');
     const modal = document.getElementById('deleteAccountModal');
@@ -432,8 +426,6 @@ function wireDeleteAccount() {
     });
 }
 
-/* ---------------- Settings: Help & Support ---------------- */
-
 function wireHelpSupport() {
     const helpBtn = document.getElementById('helpSupportBtn');
     const modal = document.getElementById('helpSupportModal');
@@ -447,8 +439,6 @@ function wireHelpSupport() {
         if (e.target === modal) closeModal('helpSupportModal');
     });
 }
-
-/* ---------------- Settings: Logout ---------------- */
 
 function wireSettingsLogout() {
     const settingsLogoutBtn = document.getElementById('settingsLogoutBtn');

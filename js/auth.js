@@ -140,8 +140,6 @@ function switchTab(tab) {
     }
 }
 
-/* ---------------- Signup wizard ---------------- */
-
 const STEP_IDS = [
     'step-type',
     'step-customer-2', 'step-customer-3',

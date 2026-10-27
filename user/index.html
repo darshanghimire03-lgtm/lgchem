@@ -9,41 +9,19 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../common.css">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/navbar.css">
+    <link rel="stylesheet" href="../css/user-menu.css">
+    <link rel="stylesheet" href="../css/footer.css">
+    <link rel="stylesheet" href="../css/account.css">
+    <link rel="stylesheet" href="../css/skeleton.css">
+    <link rel="stylesheet" href="../css/state-panel.css">
+    <link rel="stylesheet" href="../css/settings.css">
+    <link rel="stylesheet" href="../css/modal.css">
 </head>
-<body data-base="../">
+<body data-base="../" data-active="user" data-scripts="firebase-config,auth,user,cart-helper">
 
-    <nav class="navbar">
-        <a href="../index.html" class="brand-container">
-            <img src="../favicon.png" alt="LG CHEM Logo" class="brand-logo">
-            <div class="brand-name">LG <span>CHEM</span></div>
-        </a>
-        <div class="nav-icons">
-            <a href="../auth/index.html" class="icon-btn" id="profileLink" aria-label="Profile">
-                <i class="fas fa-user-circle"></i>
-            </a>
-
-            <div class="user-menu" id="userMenu">
-                <div class="user-chip active-page" id="userChip">
-                    <div class="user-avatar" id="userAvatar">?</div>
-                    <span class="user-name" id="userNameLabel">Account</span>
-                    <i class="fas fa-chevron-down" style="font-size:0.7rem;"></i>
-                </div>
-                <div class="user-dropdown" id="userDropdown">
-                    <span class="account-type-badge" id="userTypeBadge">Customer</span>
-                    <a href="../user/index.html"><i class="fas fa-id-card"></i> My Account</a>
-                    <a href="#"><i class="fas fa-box"></i> My Orders</a>
-                    <button class="logout-item" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
-                </div>
-            </div>
-
-            <a href="../cart/index.html" class="icon-btn" aria-label="Cart">
-                <i class="fas fa-shopping-cart"></i>
-                <span class="cart-badge" id="cartBadge">0</span>
-            </a>
-        </div>
-    </nav>
+    <div data-include="navbar"></div>
 
     <section class="account-section">
         <div id="accountRoot">
@@ -103,87 +81,14 @@
         </div>
     </section>
 
-    <div class="modal-overlay" id="changePasswordModal">
-        <div class="modal-box">
-            <div class="modal-header">
-                <h3><i class="fas fa-key"></i> Change Password</h3>
-                <button class="modal-close" id="closeChangePasswordModal" aria-label="Close"><i class="fas fa-times"></i></button>
-            </div>
-            <div class="modal-msg hidden" id="changePasswordMsg"></div>
-            <form id="changePasswordForm">
-                <div class="form-group">
-                    <label for="currentPasswordInput">Current password</label>
-                    <input type="password" id="currentPasswordInput" required autocomplete="current-password">
-                </div>
-                <div class="form-group">
-                    <label for="newPasswordInput">New password</label>
-                    <input type="password" id="newPasswordInput" required minlength="6" autocomplete="new-password">
-                </div>
-                <div class="form-group">
-                    <label for="confirmNewPasswordInput">Confirm new password</label>
-                    <input type="password" id="confirmNewPasswordInput" required minlength="6" autocomplete="new-password">
-                </div>
-                <button type="submit" class="modal-submit-btn" id="changePasswordSubmitBtn">
-                    <span id="changePasswordSubmitText">Update Password</span> <i class="fas fa-arrow-right"></i>
-                </button>
-            </form>
-        </div>
-    </div>
+    <div data-include="account-modals"></div>
 
-    <div class="modal-overlay" id="deleteAccountModal">
-        <div class="modal-box">
-            <div class="modal-header">
-                <h3><i class="fas fa-triangle-exclamation"></i> Delete Account</h3>
-                <button class="modal-close" id="closeDeleteAccountModal" aria-label="Close"><i class="fas fa-times"></i></button>
-            </div>
-            <div class="modal-msg hidden" id="deleteAccountMsg"></div>
-            <p class="modal-warning">This will permanently delete your account and cannot be undone. Please enter your password to confirm.</p>
-            <form id="deleteAccountForm">
-                <div class="form-group">
-                    <label for="deletePasswordInput">Password</label>
-                    <input type="password" id="deletePasswordInput" required autocomplete="current-password">
-                </div>
-                <button type="submit" class="modal-submit-btn modal-submit-danger" id="deleteAccountSubmitBtn">
-                    <span id="deleteAccountSubmitText">Delete My Account</span> <i class="fas fa-trash"></i>
-                </button>
-            </form>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="helpSupportModal">
-        <div class="modal-box">
-            <div class="modal-header">
-                <h3><i class="fas fa-circle-question"></i> Help &amp; Support</h3>
-                <button class="modal-close" id="closeHelpSupportModal" aria-label="Close"><i class="fas fa-times"></i></button>
-            </div>
-            <p class="modal-text">Need help with your order or account? Reach out to us and we'll get back to you as soon as possible.</p>
-            <div class="support-contact-row">
-                <i class="fas fa-envelope"></i>
-                <span>support@lgchem.com.np</span>
-            </div>
-            <div class="support-contact-row">
-                <i class="fas fa-phone"></i>
-                <span>+977 98XXXXXXXX</span>
-            </div>
-            <div class="support-contact-row">
-                <i class="fas fa-location-dot"></i>
-                <span>Tikapur 3, Kailali, Nepal</span>
-            </div>
-        </div>
-    </div>
-
-    <footer class="footer">
-        <p>&copy; 2026 <span>LG CHEM</span>. All rights reserved.</p>
-        <p style="font-size: 0.8rem; margin-top: 5px; opacity: 0.7;">Tikapur 3, Kailali, Nepal</p>
-    </footer>
+    <div data-include="footer"></div>
 
     <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-database-compat.js"></script>
-    <script src="../firebase-config.js"></script>
-    <script src="../auth.js"></script>
-    <script src="user.js"></script>
-    <script src="../cart-helper.js"></script>
+    <script src="../js/layout.js"></script>
 
 </body>
 </html>

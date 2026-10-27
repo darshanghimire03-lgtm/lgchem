@@ -1,0 +1,33 @@
+<nav class="navbar">
+    <a href="{{base}}index.html" class="brand-container">
+        <img src="{{base}}favicon.png" alt="LG CHEM logo" class="brand-logo">
+        <div class="brand-name">LG <span>CHEM</span></div>
+    </a>
+    <div class="nav-links" id="navLinks">
+        <a href="{{base}}index.html" class="active">Home</a>
+        <a href="{{base}}index.html#products">Products</a>
+        <a href="{{base}}about/index.html">About</a>
+    </div>
+    <div class="nav-icons">
+        <a href="{{base}}auth/index.html" class="icon-btn" id="profileLink" aria-label="Profile">
+            <i class="fas fa-user-circle"></i>
+        </a>
+        <div class="user-menu" id="userMenu">
+            <div class="user-chip" id="userChip">
+                <div class="user-avatar" id="userAvatar">?</div>
+                <span class="user-name" id="userNameLabel">Account</span>
+                <i class="fas fa-chevron-down" style="font-size:0.7rem;"></i>
+            </div>
+            <div class="user-dropdown" id="userDropdown">
+                <span class="account-type-badge" id="userTypeBadge">Customer</span>
+                <a href="{{base}}user/index.html"><i class="fas fa-id-card"></i> My Account</a>
+                <a href="#"><i class="fas fa-box"></i> My Orders</a>
+                <button class="logout-item" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </div>
+        </div>
+        <a href="{{base}}cart/index.html" class="icon-btn" id="cartLink" aria-label="Cart">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="cart-badge" id="cartBadge">0</span>
+        </a>
+    </div>
+</nav>
