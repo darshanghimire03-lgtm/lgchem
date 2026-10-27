@@ -1,0 +1,24 @@
+body.cart-open { overflow: hidden; }
+.cart-overlay { position: fixed; inset: 0; background: rgba(0, 26, 56, .5); opacity: 0; visibility: hidden; transition: opacity .25s ease, visibility .25s ease; z-index: 900; }
+.cart-overlay.open { opacity: 1; visibility: visible; }
+.cart-drawer { position: fixed; top: 0; right: 0; bottom: 0; width: min(460px, 100vw); background: var(--light-bg); z-index: 1000; display: flex; flex-direction: column; transform: translateX(100%); visibility: hidden; transition: transform .3s ease, visibility .3s ease; box-shadow: -12px 0 32px rgba(0, 43, 91, .18); }
+.cart-drawer.open { transform: none; visibility: visible; }
+.cart-drawer-head { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: var(--white); border-bottom: 1px solid var(--line); flex-shrink: 0; }
+.cart-drawer-head h2 { font-size: 1.25rem; font-weight: 700; color: var(--dark-blue); }
+.cart-drawer-head h2 span { color: var(--bright-green); }
+.cart-drawer-close { background: none; border: 0; width: 38px; height: 38px; border-radius: 50%; font-size: 1.2rem; color: var(--dark-blue); cursor: pointer; display: grid; place-items: center; transition: background .2s; }
+.cart-drawer-close:hover { background: var(--light-bg); }
+.cart-drawer #cartRoot { flex: 1; min-height: 0; display: flex; flex-direction: column; overflow-y: auto; }
+.cart-drawer .cart-layout { flex: 1; min-height: 0; display: flex; flex-direction: column; align-items: stretch; gap: 0; }
+.cart-drawer .cart-items, .cart-drawer .checkout-main { flex: 1; min-height: 0; overflow-y: auto; padding: 16px; }
+.cart-drawer .cart-item, .cart-drawer .co-card { flex-shrink: 0; }
+.cart-drawer .cart-item { flex-wrap: nowrap; padding: 12px; }
+.cart-drawer .cart-item-image { width: 64px; height: 64px; }
+.cart-drawer .summary-card { flex-shrink: 0; position: static; border-radius: 0; border: 0; border-top: 1px solid var(--line); box-shadow: 0 -6px 16px rgba(0, 43, 91, .06); padding: 16px 20px 20px; }
+.cart-drawer .summary-card h3 { font-size: 1.05rem; margin-bottom: 12px; }
+.cart-drawer .summary-note { margin: 6px 0 14px; }
+.cart-drawer .state-panel, .cart-drawer .pending-card { margin: 16px; flex-shrink: 0; }
+@media (max-width: 480px) {
+    .cart-drawer .cart-items, .cart-drawer .checkout-main { padding: 12px; }
+    .cart-drawer .summary-card { padding: 14px 16px 18px; }
+}

@@ -7,6 +7,10 @@
         .map(function (s) { return s.trim(); })
         .filter(Boolean);
 
+    if (scripts.indexOf('cart') === -1) scripts.push('cart');
+
+    const drawerStyles = ['cart', 'checkout', 'state-panel', 'cart-drawer'];
+
     function fetchPart(name) {
         return fetch(base + 'layout/' + name + '.html')
             .then(function (res) {
@@ -27,12 +31,27 @@
         }));
     }
 
+    function injectCartDrawer() {
+        if (document.getElementById('cartDrawer')) return Promise.resolve();
+        return fetchPart('cart-drawer').then(function (html) {
+            body.insertAdjacentHTML('beforeend', html);
+        });
+    }
+
+    function loadStyles() {
+        drawerStyles.forEach(function (name) {
+            const href = base + 'css/' + name + '.css';
+            if (document.querySelector('link[href$="css/' + name + '.css"]')) return;
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = href;
+            document.head.appendChild(link);
+        });
+    }
+
     function applyState() {
         const links = document.getElementById('navLinks');
         if (links && active !== 'home') links.remove();
-
-        const cartLink = document.getElementById('cartLink');
-        if (cartLink && active === 'cart') cartLink.classList.add('active-page');
 
         const chip = document.getElementById('userChip');
         if (chip && active === 'user') chip.classList.add('active-page');
@@ -58,7 +77,9 @@
     }
 
     function start() {
+        loadStyles();
         injectParts()
+            .then(injectCartDrawer)
             .then(applyState)
             .then(loadScripts)
             .then(function () {

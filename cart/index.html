@@ -3,46 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="refresh" content="0; url=../index.html?cart=1">
     <title>Your Cart - LG CHEM</title>
-
     <link rel="icon" type="image/png" href="../favicon.png">
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../css/base.css">
-    <link rel="stylesheet" href="../css/navbar.css">
-    <link rel="stylesheet" href="../css/user-menu.css">
-    <link rel="stylesheet" href="../css/footer.css">
-    <link rel="stylesheet" href="../css/cart.css">
-    <link rel="stylesheet" href="../css/checkout.css">
-    <link rel="stylesheet" href="../css/state-panel.css">
 </head>
-<body data-base="../" data-active="cart" data-scripts="firebase-config,auth,cart,cart-helper">
-
-    <div data-include="navbar"></div>
-
-    <section class="cart-section">
-        <div class="cart-header">
-            <h2 class="cart-title">Your <span>Cart</span></h2>
-            <a href="../index.html#products" class="continue-shopping">
-                <i class="fas fa-arrow-left"></i> Continue Shopping
-            </a>
-        </div>
-
-        <div id="cartRoot">
-            <div class="state-panel">
-                <i class="fas fa-spinner fa-spin"></i>
-                <h3>Loading your cart…</h3>
-            </div>
-        </div>
-    </section>
-
-    <div data-include="footer"></div>
-
-    <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-database-compat.js"></script>
-    <script src="../js/layout.js"></script>
-
+<body>
+    <script>window.location.replace('../index.html?cart=1');</script>
+    <noscript><a href="../index.html?cart=1">Open your cart</a></noscript>
 </body>
 </html>

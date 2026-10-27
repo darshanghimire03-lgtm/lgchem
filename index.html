@@ -24,9 +24,8 @@
     <link rel="stylesheet" href="css/navbar.css">
     <link rel="stylesheet" href="css/user-menu.css">
     <link rel="stylesheet" href="css/buttons.css">
-    <link rel="stylesheet" href="css/hero.css">
-    <link rel="stylesheet" href="css/trust.css">
     <link rel="stylesheet" href="css/products.css">
+    <link rel="stylesheet" href="css/storefront.css">
     <link rel="stylesheet" href="css/cta-band.css">
     <link rel="stylesheet" href="css/footer-main.css">
 </head>
@@ -34,40 +33,41 @@
 
     <div data-include="navbar"></div>
 
-    <header class="hero">
+    <div class="promo-bar" aria-label="Why shop with us">
         <div class="container">
-            <h1>Chemical products you can order with confidence</h1>
-            <p>Clear specifications, competitive pricing and convenient ordering for businesses and customers across Kailali.</p>
-            <div class="hero-actions">
-                <a href="#products" class="btn btn-primary">Browse products <i class="fas fa-arrow-right"></i></a>
-                <a href="about/index.html" class="btn btn-ghost">About us</a>
-            </div>
+            <span><i class="fas fa-circle-check"></i> Quality assured products</span>
+            <span><i class="fas fa-tags"></i> Fair, transparent pricing</span>
+            <span><i class="fas fa-file-lines"></i> Clear specifications</span>
+            <span><i class="fas fa-truck-fast"></i> Delivery from Tikapur</span>
         </div>
-    </header>
+    </div>
 
-    <section class="trust" aria-label="Why choose us">
-        <div class="container trust-grid">
-            <div class="trust-item"><i class="fas fa-circle-check"></i><div><strong>Quality assured</strong><span>Reliable products</span></div></div>
-            <div class="trust-item"><i class="fas fa-file-lines"></i><div><strong>Clear specifications</strong><span>Know what you order</span></div></div>
-            <div class="trust-item"><i class="fas fa-tags"></i><div><strong>Fair pricing</strong><span>Transparent rates</span></div></div>
-            <div class="trust-item"><i class="fas fa-truck-fast"></i><div><strong>Dependable delivery</strong><span>From Tikapur to you</span></div></div>
-        </div>
-    </section>
-
-    <main class="products-section" id="products">
+    <main class="store" id="products">
         <div class="container">
-            <div class="section-head">
+            <div class="store-head">
                 <div>
-                    <h2 class="section-title">Our products</h2>
-                    <p class="section-sub">Choose a category or search by name.</p>
+                    <h1 class="store-title">Shop chemical products</h1>
+                    <p class="store-sub">Clear specifications, competitive pricing and convenient ordering across Kailali.</p>
                 </div>
-                <div class="search-box">
-                    <i class="fas fa-search"></i>
-                    <input type="search" id="searchInput" placeholder="Search products" aria-label="Search products">
+                <div class="store-tools">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="search" id="searchInput" placeholder="Search products" aria-label="Search products">
+                    </div>
+                    <div class="sort-box">
+                        <select id="sortSelect" aria-label="Sort products">
+                            <option value="featured">Sort: Featured</option>
+                            <option value="price-asc">Price: Low to High</option>
+                            <option value="price-desc">Price: High to Low</option>
+                            <option value="name-asc">Name: A to Z</option>
+                        </select>
+                    </div>
                 </div>
             </div>
             <div class="filters" id="filters" role="group" aria-label="Filter by category"></div>
+            <div class="result-bar" id="resultCount" aria-live="polite"></div>
             <div class="product-grid" id="productGrid">
+                <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
                 <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
             </div>
         </div>

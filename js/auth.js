@@ -121,6 +121,7 @@ function switchTab(tab) {
     const signupForm = document.getElementById('signupForm');
     const formTitle = document.getElementById('formTitle');
     const formSubtitle = document.getElementById('formSubtitle');
+    if (!loginTab || !signupTab || !loginForm || !signupForm) return;
 
     if (tab === 'login') {
         loginTab.classList.add('active');
@@ -287,12 +288,14 @@ function togglePassword(inputId, icon) {
 
 function showMsg(id, text, type) {
     const el = document.getElementById(id);
+    if (!el) return;
     el.textContent = text;
     el.className = 'form-msg ' + type;
 }
 
 function clearMsg(id) {
     const el = document.getElementById(id);
+    if (!el) return;
     el.textContent = '';
     el.className = 'form-msg';
 }
@@ -442,6 +445,8 @@ function initials(name) {
 }
 
 function wireUserMenu() {
+    const base = document.body.getAttribute('data-base') || '';
+    const onAuthPage = document.body.getAttribute('data-active') === 'auth';
     const profileLink = document.getElementById('profileLink');
     const userMenu = document.getElementById('userMenu');
     const userChip = document.getElementById('userChip');
@@ -451,61 +456,71 @@ function wireUserMenu() {
     const userTypeBadge = document.getElementById('userTypeBadge');
     const logoutBtn = document.getElementById('logoutBtn');
 
+    if (!profileLink || !userMenu || !userChip) return;
+    if (userMenu.getAttribute('data-wired')) return;
+    userMenu.setAttribute('data-wired', '1');
+
     userChip.addEventListener('click', function (e) {
         e.preventDefault();
-        window.location.href = '../user/index.html';
+        window.location.href = base + 'user/index.html';
     });
 
-    logoutBtn.addEventListener('click', function (e) {
-        e.stopPropagation();
-        window.LGChem.signOut().then(function () {
-            window.LGSession.clear();
-            window.location.reload();
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            const finish = function () {
+                if (window.LGSession) window.LGSession.clear();
+                if (onAuthPage) {
+                    window.location.reload();
+                } else {
+                    window.location.href = base + 'index.html';
+                }
+            };
+            if (window.LGChem && typeof window.LGChem.signOut === 'function') {
+                window.LGChem.signOut().then(finish, finish);
+            } else {
+                finish();
+            }
         });
-    });
+    }
 
     profileLink.addEventListener('click', function (e) {
-        e.preventDefault();
-        switchTab('login');
-        document.getElementById('authFormsWrapper').scrollIntoView({ behavior: 'smooth' });
+        if (window.LGSession && window.LGSession.isLoggedIn() && !onAuthPage) {
+            e.preventDefault();
+            window.location.href = base + 'user/index.html';
+            return;
+        }
+        if (onAuthPage) {
+            e.preventDefault();
+            if (document.getElementById('loginTab')) switchTab('login');
+            const wrapper = document.getElementById('authFormsWrapper');
+            if (wrapper) wrapper.scrollIntoView({ behavior: 'smooth' });
+        }
     });
 
     if (!window.LGSession) return;
 
-    window.LGSession.onChange(function (session) {
+    function applySession(session) {
         if (session) {
             profileLink.style.display = 'none';
             userMenu.style.display = 'flex';
-            userAvatar.textContent = initials(session.name);
-            userNameLabel.textContent = session.name;
-            userTypeBadge.textContent = (session.accountType || 'customer').toUpperCase();
-            refreshCartBadge(session.uid);
+            if (userAvatar) userAvatar.textContent = initials(session.name);
+            if (userNameLabel) userNameLabel.textContent = session.name;
+            if (userTypeBadge) userTypeBadge.textContent = (session.accountType || 'customer').toUpperCase();
         } else {
             profileLink.style.display = 'inline-flex';
             userMenu.style.display = 'none';
-            userDropdown.classList.remove('open');
-            refreshCartBadge(null);
+            if (userDropdown) userDropdown.classList.remove('open');
         }
-    });
-}
-
-function refreshCartBadge(uid) {
-    const badge = document.getElementById('cartBadge');
-    if (!uid || !window.LGChem) {
-        badge.textContent = '0';
-        return;
     }
-    window.LGChem.rtdb.ref('carts/' + uid).once('value')
-        .then(function (snap) {
-            const val = snap.val();
-            const count = val ? Object.values(val).reduce(function (sum, item) { return sum + (item.qty || 1); }, 0) : 0;
-            badge.textContent = count;
-        })
-        .catch(function (err) { console.error('Failed to load cart count:', err); });
+
+    applySession(window.LGSession.getCached());
+    window.LGSession.onChange(applySession);
 }
 
 function wireExistingSession() {
     if (!window.LGSession) return;
+    if (!document.getElementById('loggedInPanel') || !document.getElementById('authFormsWrapper')) return;
 
     window.LGSession.onChange(function (session) {
         const loggedInPanel = document.getElementById('loggedInPanel');
@@ -523,12 +538,20 @@ function wireExistingSession() {
         }
     });
 
-    document.getElementById('loggedInLogoutBtn').addEventListener('click', function () {
-        window.LGChem.signOut().then(function () {
-            window.LGSession.clear();
-            window.location.reload();
+    const panelLogout = document.getElementById('loggedInLogoutBtn');
+    if (panelLogout) {
+        panelLogout.addEventListener('click', function () {
+            const finish = function () {
+                window.LGSession.clear();
+                window.location.reload();
+            };
+            if (window.LGChem && typeof window.LGChem.signOut === 'function') {
+                window.LGChem.signOut().then(finish, finish);
+            } else {
+                finish();
+            }
         });
-    });
+    }
 }
 
 document.addEventListener('DOMContentLoaded', function () {

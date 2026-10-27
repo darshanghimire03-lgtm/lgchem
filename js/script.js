@@ -1,7 +1,7 @@
 const BASE = document.body.getAttribute('data-base') || '';
 const FALLBACK_IMG = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300'><rect width='100%25' height='100%25' fill='%23eef3f8'/><text x='50%25' y='50%25' fill='%238a97a6' font-family='sans-serif' font-size='18' text-anchor='middle'>No image</text></svg>";
 
-const state = { products: [], category: 'All', query: '' };
+const state = { products: [], category: 'All', query: '', sort: 'featured' };
 
 function esc(value) {
     return String(value == null ? '' : value).replace(/[&<>"']/g, function (c) {
@@ -13,11 +13,18 @@ function initials(name) {
     return name ? name.trim().charAt(0).toUpperCase() : '?';
 }
 
+function priceNumber(value) {
+    const match = String(value == null ? '' : value).replace(/,/g, '').match(/\d+(\.\d+)?/);
+    return match ? parseFloat(match[0]) : 0;
+}
+
 function wireUserMenu() {
     const el = function (id) { return document.getElementById(id); };
     const profileLink = el('profileLink'), userMenu = el('userMenu'), userChip = el('userChip'),
           userDropdown = el('userDropdown'), logoutBtn = el('logoutBtn');
     if (!profileLink || !userMenu || !userChip || !userDropdown) return;
+    if (userMenu.getAttribute('data-wired')) return;
+    userMenu.setAttribute('data-wired', '1');
 
     userChip.addEventListener('click', function (e) {
         e.stopPropagation();
@@ -79,17 +86,34 @@ function renderFilters() {
 
 function visibleProducts() {
     const q = state.query.trim().toLowerCase();
-    return state.products.filter(function (p) {
+    const list = state.products.filter(function (p) {
         const catOk = state.category === 'All' || p.category === state.category;
         const textOk = !q || ((p.name || '') + ' ' + (p.category || '')).toLowerCase().indexOf(q) !== -1;
         return catOk && textOk;
     });
+
+    if (state.sort === 'price-asc') {
+        list.sort(function (a, b) { return priceNumber(a.price) - priceNumber(b.price); });
+    } else if (state.sort === 'price-desc') {
+        list.sort(function (a, b) { return priceNumber(b.price) - priceNumber(a.price); });
+    } else if (state.sort === 'name-asc') {
+        list.sort(function (a, b) { return String(a.name || '').localeCompare(String(b.name || '')); });
+    }
+    return list;
+}
+
+function updateResultCount(count) {
+    const el = document.getElementById('resultCount');
+    if (!el) return;
+    el.textContent = count + (count === 1 ? ' product' : ' products') +
+        (state.category !== 'All' ? ' in ' + state.category : '');
 }
 
 function renderProducts() {
     const grid = document.getElementById('productGrid');
     if (!grid) return;
     const list = visibleProducts();
+    updateResultCount(list.length);
 
     if (!list.length) {
         grid.innerHTML = message('fa-flask',
@@ -144,6 +168,13 @@ function loadProducts() {
 function wireFilters() {
     const filters = document.getElementById('filters');
     const search = document.getElementById('searchInput');
+    const sort = document.getElementById('sortSelect');
+    if (sort) {
+        sort.addEventListener('change', function () {
+            state.sort = sort.value;
+            renderProducts();
+        });
+    }
     if (filters) {
         filters.addEventListener('click', function (e) {
             const chip = e.target.closest('.chip');
