@@ -73,15 +73,41 @@
         </div>
     </main>
 
-    <section class="cta-band">
+    <section class="cta-band" id="ctaBand">
         <div class="container">
             <div>
                 <h2>Selling chemical products?</h2>
                 <p>Create a seller account and list your products with LG CHEM.</p>
             </div>
-            <a href="auth/index.html" class="btn btn-primary">Create an account</a>
+            <a href="auth/" class="btn btn-primary">Create an account</a>
         </div>
     </section>
+
+    <script>
+        (function () {
+            var band = document.getElementById('ctaBand');
+            if (!band) return;
+
+            function storedLogin() {
+                try {
+                    return !!localStorage.getItem('lgchem_session');
+                } catch (err) {
+                    return false;
+                }
+            }
+
+            if (storedLogin()) band.style.display = 'none';
+
+            var wired = false;
+            document.addEventListener('DOMContentLoaded', function () {
+                if (wired || !window.LGSession) return;
+                wired = true;
+                window.LGSession.onChange(function (session) {
+                    band.style.display = session ? 'none' : '';
+                });
+            });
+        })();
+    </script>
 
     <div data-include="footer-main"></div>
 
