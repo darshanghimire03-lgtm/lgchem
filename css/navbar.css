@@ -1,0 +1,19 @@
+.navbar { background: rgba(255,255,255,.96); backdrop-filter: blur(8px); display: flex; justify-content: space-between; align-items: center; gap: 24px; padding: 12px 5%; border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 100; }
+.brand-container { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+.brand-logo { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; border: 2px solid var(--dark-blue); background: var(--light-bg); }
+.brand-name { font-size: 1.35rem; font-weight: 700; color: var(--dark-blue); letter-spacing: .5px; }
+.brand-name span { color: var(--bright-green); }
+.nav-links { display: flex; gap: 6px; margin-right: auto; margin-left: 24px; }
+.nav-links a { color: var(--text-light); text-decoration: none; font-size: .92rem; font-weight: 500; padding: 8px 14px; border-radius: 8px; transition: background .2s, color .2s; }
+.nav-links a:hover, .nav-links a.active { color: var(--dark-blue); background: var(--light-bg); }
+.nav-icons { display: flex; gap: 22px; align-items: center; }
+.icon-btn { background: none; border: none; cursor: pointer; font-size: 1.25rem; color: var(--dark-blue); transition: color .2s; position: relative; text-decoration: none; }
+.icon-btn:hover, .icon-btn.active-page { color: var(--bright-green); }
+.cart-badge { position: absolute; top: -9px; right: -12px; min-width: 18px; height: 18px; background: var(--bright-green); color: #fff; font-size: .68rem; font-weight: 700; display: grid; place-items: center; padding: 0 5px; border-radius: 9px; }
+@media (max-width: 760px) { .nav-links { display: none; } }
+@media (max-width: 600px) {
+    .navbar { padding: 10px 15px; }
+    .brand-logo { width: 34px; height: 34px; }
+    .brand-name { font-size: 1.15rem; }
+    .nav-icons { gap: 16px; }
+}

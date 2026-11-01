@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google-site-verification" content="Py2a6rlmxbYSWTwFtdBbKPvU0b-7EQ97cfKU4Nh0oDA" />
+    <meta name="description" content="LG CHEM — quality chemical products with clear specifications, fair pricing and reliable delivery in Tikapur, Kailali, Nepal.">
+    <title>LG CHEM | Quality Chemical Products</title>
+    <meta property="og:site_name" content="LG CHEM">
+    <link rel="canonical" href="https://lgchem.com.np/">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "LG CHEM",
+      "alternateName": "LG Chem Nepal",
+      "url": "https://lgchem.com.np/"
+    }
+    </script>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/navbar.css">
+    <link rel="stylesheet" href="css/user-menu.css">
+    <link rel="stylesheet" href="css/buttons.css">
+    <link rel="stylesheet" href="css/products.css">
+    <link rel="stylesheet" href="css/storefront.css">
+    <link rel="stylesheet" href="css/cta-band.css">
+    <link rel="stylesheet" href="css/footer-main.css">
+</head>
+<body data-base="" data-active="home" data-scripts="firebase-config,auth,cart-helper,script">
+
+    <div data-include="navbar"></div>
+
+    <main class="store" id="products">
+        <div class="container">
+            <div class="store-head">
+                <div>
+                    <h1 class="store-title">Shop chemical products</h1>
+                    <p class="store-sub">Clear specifications, competitive pricing and convenient ordering across Kailali.</p>
+                </div>
+                <div class="store-tools">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="search" id="searchInput" placeholder="Search products" aria-label="Search products">
+                    </div>
+                    <div class="sort-box">
+                        <select id="sortSelect" aria-label="Sort products">
+                            <option value="featured">Sort: Featured</option>
+                            <option value="price-asc">Price: Low to High</option>
+                            <option value="price-desc">Price: High to Low</option>
+                            <option value="name-asc">Name: A to Z</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="filters" id="filters" role="group" aria-label="Filter by category"></div>
+            <div class="result-bar" id="resultCount" aria-live="polite"></div>
+            <div class="product-grid" id="productGrid">
+                <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
+                <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
+            </div>
+        </div>
+    </main>
+
+    <section class="cta-band" id="ctaBand">
+        <div class="container">
+            <div>
+                <h2>Selling chemical products?</h2>
+                <p>Create a seller account and list your products with LG CHEM.</p>
+            </div>
+            <a href="auth.html" class="btn btn-primary">Create an account</a>
+        </div>
+    </section>
+
+    <script>
+        (function () {
+            var band = document.getElementById('ctaBand');
+            if (!band) return;
+
+            function storedLogin() {
+                try {
+                    return !!localStorage.getItem('lgchem_session');
+                } catch (err) {
+                    return false;
+                }
+            }
+
+            if (storedLogin()) band.style.display = 'none';
+
+            var wired = false;
+            document.addEventListener('DOMContentLoaded', function () {
+                if (wired || !window.LGSession) return;
+                wired = true;
+                window.LGSession.onChange(function (session) {
+                    band.style.display = session ? 'none' : '';
+                });
+            });
+        })();
+    </script>
+
+    <div data-include="footer-main"></div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-database-compat.js"></script>
+    <script src="js/layout.js"></script>
+</body>
+</html>

@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Products - LG CHEM Admin</title>
+<link rel="icon" type="image/png" href="../favicon.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--blue:#002B5B;--green:#008000;--bg:#f4f8fb;--line:#e3e9f0;--text:#1f2937;--muted:#5b6675;--red:#d9534f}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',system-ui,sans-serif}
+body{background:var(--bg);color:var(--text);min-height:100vh}
+.splash{display:flex;align-items:center;justify-content:center;min-height:100vh;color:var(--muted);gap:10px}
+body.ready .splash{display:none}
+.topbar,.wrap{display:none}
+body.ready .topbar{display:flex}
+body.ready .wrap{display:grid}
+.topbar{background:var(--blue);color:#fff;align-items:center;justify-content:space-between;gap:12px;padding:12px 5%;flex-wrap:wrap}
+.brand{font-weight:700;font-size:1.2rem}
+.brand span{color:#6fdc6f}
+.nav{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.nav a,.nav button{color:#fff;text-decoration:none;background:transparent;border:0;padding:8px 14px;border-radius:8px;font-size:.88rem;cursor:pointer}
+.nav a.active{background:rgba(255,255,255,.18)}
+.nav a:hover,.nav button:hover{background:rgba(255,255,255,.12)}
+.who{font-size:.8rem;opacity:.8;padding:0 6px}
+.wrap{grid-template-columns:360px 1fr;gap:20px;padding:24px 5%;max-width:1280px;margin:0 auto;align-items:start}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px;box-shadow:0 1px 2px rgba(0,43,91,.06)}
+.card h2{font-size:1.05rem;color:var(--blue);margin-bottom:14px}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:.78rem;font-weight:600;margin-bottom:4px}
+.field input{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:9px;font-size:.9rem;outline:none}
+.field input:focus{border-color:var(--green)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.preview{width:100%;height:140px;object-fit:cover;border-radius:10px;background:#eef3f8;margin-bottom:12px;display:none}
+.actions{display:flex;gap:8px;margin-top:6px}
+.btn{flex:1;padding:11px;border:0;border-radius:9px;font-weight:600;font-size:.9rem;cursor:pointer;background:var(--green);color:#fff}
+.btn.ghost{background:#fff;color:var(--text);border:1px solid var(--line)}
+.btn:disabled{opacity:.6;cursor:not-allowed}
+.msg{display:none;padding:9px 12px;border-radius:8px;font-size:.82rem;margin-bottom:12px}
+.msg.error{display:block;background:#fdecea;color:#b3261e}
+.msg.success{display:block;background:#e8f3e8;color:#1b6b1b}
+.list-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.list-head h2{margin:0}
+.list-head input{padding:9px 12px;border:1px solid var(--line);border-radius:9px;font-size:.88rem;outline:none;min-width:180px}
+.row{display:flex;gap:14px;align-items:center;padding:12px 0;border-top:1px solid var(--line)}
+.row:first-child{border-top:0}
+.row img{width:64px;height:64px;border-radius:10px;object-fit:cover;background:#eef3f8;flex-shrink:0}
+.info{flex:1;min-width:0}
+.name{font-weight:600;font-size:.95rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.meta{font-size:.78rem;color:var(--muted)}
+.price{font-weight:600;color:var(--green);font-size:.9rem}
+.row-actions{display:flex;gap:6px}
+.icon-btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:8px 11px;cursor:pointer;font-size:.8rem;color:var(--text)}
+.icon-btn.danger{color:var(--red);border-color:#f1c9c7}
+.icon-btn:hover{background:var(--bg)}
+.empty{text-align:center;color:var(--muted);padding:30px 10px;font-size:.9rem}
+@media(max-width:860px){.wrap{grid-template-columns:1fr}.row{flex-wrap:wrap}.row-actions{width:100%}.row-actions .icon-btn{flex:1}}
+</style>
+</head>
+<body>
+<div class="splash"><i class="fas fa-spinner fa-spin"></i> Checking access…</div>
+
+<header class="topbar">
+    <div class="brand">LG <span>CHEM</span> Admin</div>
+    <nav class="nav">
+        <a href="index.html" class="active"><i class="fas fa-flask"></i> Products</a>
+        <a href="orders.html"><i class="fas fa-box"></i> Orders</a>
+        <span class="who" id="who"></span>
+        <button type="button" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+    </nav>
+</header>
+
+<main class="wrap">
+    <section class="card">
+        <h2 id="formTitle"><i class="fas fa-plus"></i> Add Product</h2>
+        <div class="msg" id="msg"></div>
+        <img class="preview" id="preview" alt="">
+        <form id="productForm">
+            <div class="field">
+                <label>Product Name</label>
+                <input type="text" id="pName" placeholder="e.g. Phenyl 1L" required>
+            </div>
+            <div class="field">
+                <label>Category</label>
+                <input type="text" id="pCategory" list="catList" placeholder="e.g. Cleaning" required>
+                <datalist id="catList"></datalist>
+            </div>
+            <div class="two">
+                <div class="field">
+                    <label>Price</label>
+                    <input type="text" id="pPrice" placeholder="Rs. 250" required>
+                </div>
+                <div class="field">
+                    <label>Unit</label>
+                    <input type="text" id="pUnit" placeholder="per litre">
+                </div>
+            </div>
+            <div class="field">
+                <label>Image URL</label>
+                <input type="url" id="pImage" placeholder="https://...">
+            </div>
+            <div class="actions">
+                <button type="button" class="btn ghost" id="cancelBtn" style="display:none">Cancel</button>
+                <button type="submit" class="btn" id="saveBtn">Add Product</button>
+            </div>
+        </form>
+    </section>
+
+    <section class="card">
+        <div class="list-head">
+            <h2>Products <span id="count"></span></h2>
+            <input type="search" id="search" placeholder="Search products">
+        </div>
+        <div id="list"></div>
+    </section>
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-database-compat.js"></script>
+<script src="../js/firebase-config.js"></script>
+<script>
+(function () {
+    if (!window.LGChem) {
+        document.querySelector('.splash').textContent = window.LGChemInitError || 'Could not connect to Firebase.';
+        return;
+    }
+
+    var auth = window.LGChem.auth;
+    var db = window.LGChem.rtdb;
+    var FALLBACK = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><rect width='100%25' height='100%25' fill='%23eef3f8'/><text x='50%25' y='50%25' fill='%238a97a6' font-family='sans-serif' font-size='13' text-anchor='middle' dy='.3em'>No image</text></svg>";
+
+    var products = [];
+    var editingKey = null;
+    var started = false;
+
+    var el = function (id) { return document.getElementById(id); };
+    var form = el('productForm');
+    var listEl = el('list');
+    var msg = el('msg');
+
+    function esc(v) {
+        return String(v == null ? '' : v).replace(/[&<>"']/g, function (c) {
+            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+        });
+    }
+
+    function show(text, type) {
+        msg.textContent = text;
+        msg.className = 'msg ' + type;
+        if (type === 'success') setTimeout(function () { msg.className = 'msg'; }, 2500);
+    }
+
+    function updatePreview() {
+        var url = el('pImage').value.trim();
+        var img = el('preview');
+        if (url) {
+            img.src = url;
+            img.style.display = 'block';
+        } else {
+            img.style.display = 'none';
+        }
+    }
+
+    function resetForm() {
+        editingKey = null;
+        form.reset();
+        el('formTitle').innerHTML = '<i class="fas fa-plus"></i> Add Product';
+        el('saveBtn').textContent = 'Add Product';
+        el('cancelBtn').style.display = 'none';
+        updatePreview();
+    }
+
+    function startEdit(key) {
+        var p = products.filter(function (x) { return x.key === key; })[0];
+        if (!p) return;
+        editingKey = key;
+        el('pName').value = p.name || '';
+        el('pCategory').value = p.category || '';
+        el('pPrice').value = p.price || '';
+        el('pUnit').value = p.unit || '';
+        el('pImage').value = p.image || '';
+        el('formTitle').innerHTML = '<i class="fas fa-pen"></i> Edit Product';
+        el('saveBtn').textContent = 'Save Changes';
+        el('cancelBtn').style.display = 'block';
+        msg.className = 'msg';
+        updatePreview();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function renderCategories() {
+        var cats = Array.from(new Set(products.map(function (p) { return p.category; }).filter(Boolean)));
+        el('catList').innerHTML = cats.map(function (c) { return '<option value="' + esc(c) + '">'; }).join('');
+    }
+
+    function render() {
+        var q = el('search').value.trim().toLowerCase();
+        var list = products.filter(function (p) {
+            return !q || ((p.name || '') + ' ' + (p.category || '')).toLowerCase().indexOf(q) !== -1;
+        });
+        el('count').textContent = '(' + list.length + ')';
+
+        if (!list.length) {
+            listEl.innerHTML = '<div class="empty"><i class="fas fa-flask"></i><br>' +
+                (products.length ? 'No products match your search.' : 'No products yet. Add your first product.') + '</div>';
+            return;
+        }
+
+        listEl.innerHTML = list.map(function (p) {
+            return '<div class="row" data-key="' + esc(p.key) + '">' +
+                '<img src="' + esc(p.image || FALLBACK) + '" alt="">' +
+                '<div class="info">' +
+                    '<div class="name">' + esc(p.name || 'Unnamed product') + '</div>' +
+                    '<div class="meta">' + esc(p.category || 'Uncategorized') + '</div>' +
+                    '<div class="price">' + esc(p.price) + ' <span class="meta">' + esc(p.unit) + '</span></div>' +
+                '</div>' +
+                '<div class="row-actions">' +
+                    '<button type="button" class="icon-btn" data-act="edit"><i class="fas fa-pen"></i> Edit</button>' +
+                    '<button type="button" class="icon-btn danger" data-act="remove"><i class="fas fa-trash"></i> Remove</button>' +
+                '</div>' +
+            '</div>';
+        }).join('');
+    }
+
+    function loadProducts() {
+        db.ref('products').on('value', function (snap) {
+            var val = snap.val();
+            products = val ? Object.keys(val).map(function (k) { return Object.assign({ key: k }, val[k]); }) : [];
+            products.sort(function (a, b) { return String(a.name || '').localeCompare(String(b.name || '')); });
+            renderCategories();
+            render();
+        }, function (err) {
+            listEl.innerHTML = '<div class="empty">Could not load products: ' + esc(err.message) + '</div>';
+        });
+    }
+
+    listEl.addEventListener('click', function (e) {
+        var btn = e.target.closest('[data-act]');
+        if (!btn) return;
+        var key = btn.closest('.row').getAttribute('data-key');
+        if (btn.getAttribute('data-act') === 'edit') {
+            startEdit(key);
+            return;
+        }
+        var p = products.filter(function (x) { return x.key === key; })[0];
+        if (!p || !confirm('Remove "' + (p.name || 'this product') + '"? This cannot be undone.')) return;
+        db.ref('products/' + key).remove().then(function () {
+            if (editingKey === key) resetForm();
+            show('Product removed.', 'success');
+        }).catch(function (err) {
+            show(err.message || 'Could not remove product.', 'error');
+        });
+    });
+
+    listEl.addEventListener('error', function (e) {
+        if (e.target.tagName === 'IMG' && e.target.src !== FALLBACK) e.target.src = FALLBACK;
+    }, true);
+
+    el('preview').addEventListener('error', function () { this.style.display = 'none'; });
+    el('pImage').addEventListener('input', updatePreview);
+    el('search').addEventListener('input', render);
+    el('cancelBtn').addEventListener('click', resetForm);
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var data = {
+            name: el('pName').value.trim(),
+            category: el('pCategory').value.trim(),
+            price: el('pPrice').value.trim(),
+            unit: el('pUnit').value.trim(),
+            image: el('pImage').value.trim(),
+            updatedAt: new Date().toISOString()
+        };
+        if (!data.name || !data.category || !data.price) {
+            show('Name, category and price are required.', 'error');
+            return;
+        }
+
+        var btn = el('saveBtn');
+        var wasEditing = !!editingKey;
+        btn.disabled = true;
+
+        var request;
+        if (wasEditing) {
+            request = db.ref('products/' + editingKey).update(data);
+        } else {
+            data.createdAt = data.updatedAt;
+            request = db.ref('products').push(data);
+        }
+
+        request.then(function () {
+            resetForm();
+            show(wasEditing ? 'Product updated.' : 'Product added.', 'success');
+        }).catch(function (err) {
+            show(err.code === 'PERMISSION_DENIED' ? 'Permission denied by database rules.' : (err.message || 'Could not save product.'), 'error');
+        }).then(function () {
+            btn.disabled = false;
+        });
+    });
+
+    el('logoutBtn').addEventListener('click', function () {
+        auth.signOut().then(function () { window.location.replace('auth.html'); });
+    });
+
+    auth.onAuthStateChanged(function (user) {
+        if (!user) {
+            window.location.replace('auth.html');
+            return;
+        }
+        db.ref('admins/' + user.uid).once('value').then(function (snap) {
+            if (!snap.exists()) {
+                return auth.signOut().then(function () { window.location.replace('auth.html'); });
+            }
+            if (started) return;
+            started = true;
+            var admin = snap.val();
+            el('who').textContent = admin.fullName || admin.email;
+            document.body.classList.add('ready');
+            loadProducts();
+        }).catch(function () {
+            window.location.replace('auth.html');
+        });
+    });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Account - LG CHEM</title>
+
+    <link rel="icon" type="image/png" href="../favicon.png">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/navbar.css">
+    <link rel="stylesheet" href="../css/user-menu.css">
+    <link rel="stylesheet" href="../css/footer.css">
+    <link rel="stylesheet" href="../css/account.css">
+    <link rel="stylesheet" href="../css/skeleton.css">
+    <link rel="stylesheet" href="../css/state-panel.css">
+    <link rel="stylesheet" href="../css/settings.css">
+    <link rel="stylesheet" href="../css/modal.css">
+</head>
+<body data-base="../" data-active="user" data-scripts="firebase-config,auth,user,cart-helper">
+
+    <div data-include="navbar"></div>
+
+    <section class="account-section">
+        <div id="accountRoot">
+            <div class="skeleton-header">
+                <div class="skeleton skeleton-avatar-lg"></div>
+                <div class="skeleton-header-lines">
+                    <div class="skeleton skeleton-line w-60"></div>
+                    <div class="skeleton skeleton-line w-40"></div>
+                    <div class="skeleton skeleton-line w-30"></div>
+                </div>
+            </div>
+            <div class="details-card">
+                <div class="skeleton skeleton-line w-40" style="height:20px;"></div>
+                <div class="skeleton-detail-row">
+                    <div class="skeleton skeleton-line label"></div>
+                    <div class="skeleton skeleton-line value"></div>
+                </div>
+                <div class="skeleton-detail-row">
+                    <div class="skeleton skeleton-line label"></div>
+                    <div class="skeleton skeleton-line value"></div>
+                </div>
+                <div class="skeleton-detail-row">
+                    <div class="skeleton skeleton-line label"></div>
+                    <div class="skeleton skeleton-line value"></div>
+                </div>
+                <div class="skeleton-detail-row">
+                    <div class="skeleton skeleton-line label"></div>
+                    <div class="skeleton skeleton-line value"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="settings-card" id="settingsCard" style="display:none;">
+            <h3><i class="fas fa-gear"></i> Settings</h3>
+            <div class="settings-list">
+                <button class="settings-item" id="changePasswordBtn" type="button">
+                    <span class="settings-item-left"><i class="fas fa-key"></i> Change Password</span>
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+                <a class="settings-item" href="../about/index.html" id="aboutUsBtn">
+                    <span class="settings-item-left"><i class="fas fa-circle-info"></i> About Us</span>
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+                <button class="settings-item" id="helpSupportBtn" type="button">
+                    <span class="settings-item-left"><i class="fas fa-circle-question"></i> Help &amp; Support</span>
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+                <button class="settings-item settings-item-danger" id="deleteAccountBtn" type="button">
+                    <span class="settings-item-left"><i class="fas fa-trash"></i> Delete Account</span>
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+                <button class="settings-item settings-item-danger" id="settingsLogoutBtn" type="button">
+                    <span class="settings-item-left"><i class="fas fa-sign-out-alt"></i> Logout</span>
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <div data-include="account-modals"></div>
+
+    <div data-include="footer"></div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-database-compat.js"></script>
+    <script src="../js/layout.js"></script>
+
+</body>
+</html>
